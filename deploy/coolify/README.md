@@ -41,9 +41,9 @@ Mở browser và vào Coolify server của bạn (ví dụ: `https://coolify.you
 2. Chọn **Public Repository**
 3. Paste URL với branch cụ thể:
    ```
-   https://github.com/your-username/plane@oss
+   https://github.com/your-username/plane/tree/oss
    ```
-   > **Lưu ý**: Thêm `@oss` để chỉ định branch `oss`
+   > **Lưu ý**: Thêm `/tree/oss` để chỉ định branch `oss`
 
 4. Click **Continue**
 
