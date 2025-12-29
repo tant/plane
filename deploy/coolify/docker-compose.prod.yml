@@ -1,0 +1,309 @@
+# ===========================================
+# Plane Production - Coolify Build from Source
+# ===========================================
+# Coolify sẽ tự động build images từ source code
+# Kết nối repo GitHub với Coolify và set branch: tantran
+
+x-db-env: &db-env
+  PGHOST: plane-db
+  PGDATABASE: ${POSTGRES_DB:-plane}
+  POSTGRES_USER: ${POSTGRES_USER:-plane}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-plane}
+  POSTGRES_DB: ${POSTGRES_DB:-plane}
+  POSTGRES_PORT: 5432
+  PGDATA: /var/lib/postgresql/data
+
+x-redis-env: &redis-env
+  REDIS_HOST: plane-redis
+  REDIS_PORT: 6379
+  REDIS_URL: redis://plane-redis:6379/
+
+x-minio-env: &minio-env
+  MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-access-key}
+  MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+
+x-aws-s3-env: &aws-s3-env
+  AWS_REGION: ${AWS_REGION:-}
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-access-key}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-secret-key}
+  AWS_S3_ENDPOINT_URL: http://plane-minio:9000
+  AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+
+x-mq-env: &mq-env
+  RABBITMQ_HOST: plane-mq
+  RABBITMQ_PORT: 5672
+  RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-plane}
+  RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-plane}
+  RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-plane}
+  RABBITMQ_VHOST: ${RABBITMQ_VHOST:-plane}
+
+x-live-env: &live-env
+  API_BASE_URL: http://api:8000
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
+
+x-app-env: &app-env
+  WEB_URL: ${WEB_URL:-http://localhost}
+  DEBUG: "0"
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
+  GUNICORN_WORKERS: ${GUNICORN_WORKERS:-4}
+  USE_MINIO: 1
+  DATABASE_URL: postgresql://${POSTGRES_USER:-plane}:${POSTGRES_PASSWORD:-plane}@plane-db/${POSTGRES_DB:-plane}
+  SECRET_KEY: ${SECRET_KEY}
+  AMQP_URL: amqp://${RABBITMQ_USER:-plane}:${RABBITMQ_PASSWORD:-plane}@plane-mq:5672/${RABBITMQ_VHOST:-plane}
+  API_KEY_RATE_LIMIT: ${API_KEY_RATE_LIMIT:-60/minute}
+  MINIO_ENDPOINT_SSL: "0"
+  LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
+  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+
+x-proxy-env: &proxy-env
+  FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+  BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+
+services:
+  # ===========================================
+  # Frontend Services (Build from source)
+  # ===========================================
+  web:
+    build:
+      context: ../..
+      dockerfile: ./apps/web/Dockerfile.web
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - plane-prod
+
+  admin:
+    build:
+      context: ../..
+      dockerfile: ./apps/admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - plane-prod
+
+  space:
+    build:
+      context: ../..
+      dockerfile: ./apps/space/Dockerfile.space
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - plane-prod
+
+  live:
+    build:
+      context: ../..
+      dockerfile: ./apps/live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    environment:
+      <<: [*live-env, *redis-env]
+    depends_on:
+      api:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+    networks:
+      - plane-prod
+
+  # ===========================================
+  # Backend Services (Build from source)
+  # ===========================================
+  migrator:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    command: ./bin/docker-entrypoint-migrator.sh
+    restart: "no"
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env]
+    volumes:
+      - logs_migrator:/code/plane/logs
+    depends_on:
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
+    networks:
+      - plane-prod
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    command: ./bin/docker-entrypoint-api.sh
+    restart: always
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env]
+    volumes:
+      - logs_api:/code/plane/logs
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+      plane-db:
+        condition: service_healthy
+      plane-redis:
+        condition: service_healthy
+      plane-mq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - plane-prod
+
+  worker:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    command: ./bin/docker-entrypoint-worker.sh
+    restart: always
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env]
+    volumes:
+      - logs_worker:/code/plane/logs
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - plane-prod
+
+  beat-worker:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    command: ./bin/docker-entrypoint-beat.sh
+    restart: always
+    environment:
+      <<: [*app-env, *db-env, *redis-env, *aws-s3-env]
+    volumes:
+      - logs_beat:/code/plane/logs
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - plane-prod
+
+  # ===========================================
+  # Proxy (Build from source)
+  # ===========================================
+  proxy:
+    build:
+      context: ../../apps/proxy
+      dockerfile: Dockerfile.ce
+    restart: always
+    ports:
+      - "${LISTEN_HTTP_PORT:-80}:80"
+    environment:
+      <<: *proxy-env
+    depends_on:
+      - web
+      - admin
+      - space
+      - api
+      - live
+    networks:
+      - plane-prod
+
+  # ===========================================
+  # Database Services (Pre-built images)
+  # ===========================================
+  plane-db:
+    image: postgres:15.7-alpine
+    restart: always
+    command: postgres -c 'max_connections=1000'
+    environment:
+      <<: *db-env
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-plane} -d ${POSTGRES_DB:-plane}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - plane-prod
+
+  plane-redis:
+    image: valkey/valkey:7.2.11-alpine
+    restart: always
+    volumes:
+      - redisdata_prod:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - plane-prod
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    environment:
+      <<: *mq-env
+    volumes:
+      - rabbitmq_prod:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - plane-prod
+
+  plane-minio:
+    image: minio/minio:latest
+    restart: always
+    command: server /export --console-address ":9090"
+    environment:
+      <<: *minio-env
+    volumes:
+      - uploads_prod:/export
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - plane-prod
+
+networks:
+  plane-prod:
+    driver: bridge
+
+volumes:
+  pgdata_prod:
+  redisdata_prod:
+  rabbitmq_prod:
+  uploads_prod:
+  logs_api:
+  logs_worker:
+  logs_beat:
+  logs_migrator:
