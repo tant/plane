@@ -26,8 +26,6 @@ export interface IInstance {
   latest_version: string | undefined;
   last_checked_at: string | undefined;
   namespace: string | undefined;
-  is_telemetry_enabled: boolean;
-  is_support_required: boolean;
   is_activated: boolean;
   is_setup_done: boolean;
   is_signup_screen_visited: boolean;
@@ -49,8 +47,6 @@ export interface IInstanceConfig {
   is_email_password_enabled: boolean;
   github_app_name: string | undefined;
   slack_client_id: string | undefined;
-  posthog_api_key: string | undefined;
-  posthog_host: string | undefined;
   has_unsplash_configured: boolean;
   has_llm_configured: boolean;
   file_size_limit: number | undefined;

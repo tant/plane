@@ -56,7 +56,6 @@ export const NotificationItemReadOption = observer(function NotificationItemRead
 
   return (
     <NotificationItemOptionButton
-      data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_READ_UNREAD_BUTTON}
       tooltipContent={data.read_at ? t("notification.options.mark_unread") : t("notification.options.mark_read")}
       callBack={handleNotificationUpdate}
     >

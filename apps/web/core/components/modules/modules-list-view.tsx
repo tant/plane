@@ -59,7 +59,6 @@ export const ModulesListView = observer(function ModulesListView() {
             onClick: () => toggleCreateModuleModal(true),
             disabled: !canPerformEmptyStateActions,
             variant: "primary",
-            "data-ph-element": MODULE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
           },
         ]}
       />

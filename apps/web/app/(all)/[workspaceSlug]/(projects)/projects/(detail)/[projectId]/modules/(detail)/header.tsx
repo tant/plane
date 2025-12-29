@@ -235,7 +235,6 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 onClick={() => {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 }}
-                data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.MODULE}
               >
                 Add work item
               </Button>

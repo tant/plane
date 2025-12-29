@@ -251,7 +251,6 @@ export const CreateWorkspaceForm = observer(function CreateWorkspaceForm(props: 
       <div className="flex items-center gap-4">
         {secondaryButton}
         <Button
-          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
           size="xl"

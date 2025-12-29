@@ -389,7 +389,6 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                 variant="primary"
                 type="submit"
                 loading={isLoading}
-                data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.SAVE_CHANGES_BUTTON}
               >
                 {isLoading ? t("saving") : t("save_changes")}
               </Button>
@@ -420,7 +419,6 @@ export const ProfileForm = observer(function ProfileForm(props: TProfileFormProp
                     <Button
                       variant="error-fill"
                       onClick={() => setDeactivateAccountModal(true)}
-                      data-ph-element={PROFILE_SETTINGS_TRACKER_ELEMENTS.DEACTIVATE_ACCOUNT_BUTTON}
                     >
                       {t("deactivate_account")}
                     </Button>

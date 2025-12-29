@@ -6,7 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
-import { Checkbox, Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
+import { Input, PasswordStrengthIndicator, Spinner } from "@plane/ui";
 import { getPasswordStrength } from "@plane/utils";
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
@@ -39,7 +39,6 @@ type TFormData = {
   company_name: string;
   password: string;
   confirm_password?: string;
-  is_telemetry_enabled: boolean;
 };
 
 const defaultFromData: TFormData = {
@@ -48,7 +47,6 @@ const defaultFromData: TFormData = {
   email: "",
   company_name: "",
   password: "",
-  is_telemetry_enabled: true,
 };
 
 export function InstanceSetupForm() {
@@ -58,7 +56,6 @@ export function InstanceSetupForm() {
   const lastNameParam = searchParams?.get("last_name") || undefined;
   const companyParam = searchParams?.get("company") || undefined;
   const emailParam = searchParams?.get("email") || undefined;
-  const isTelemetryEnabledParam = (searchParams?.get("is_telemetry_enabled") === "True" ? true : false) || true;
   const errorCode = searchParams?.get("error_code") || undefined;
   const errorMessage = searchParams?.get("error_message") || undefined;
   // state
@@ -88,8 +85,7 @@ export function InstanceSetupForm() {
     if (lastNameParam) setFormData((prev) => ({ ...prev, last_name: lastNameParam }));
     if (companyParam) setFormData((prev) => ({ ...prev, company_name: companyParam }));
     if (emailParam) setFormData((prev) => ({ ...prev, email: emailParam }));
-    if (isTelemetryEnabledParam) setFormData((prev) => ({ ...prev, is_telemetry_enabled: isTelemetryEnabledParam }));
-  }, [firstNameParam, lastNameParam, companyParam, emailParam, isTelemetryEnabledParam]);
+  }, [firstNameParam, lastNameParam, companyParam, emailParam]);
 
   // derived values
   const errorData: TError = useMemo(() => {
@@ -152,7 +148,6 @@ export function InstanceSetupForm() {
             onError={() => setIsSubmitting(false)}
           >
             <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-            <input type="hidden" name="is_telemetry_enabled" value={formData.is_telemetry_enabled ? "True" : "False"} />
 
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <div className="w-full space-y-1">
@@ -314,30 +309,6 @@ export function InstanceSetupForm() {
                 renderPasswordMatchError && (
                   <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>
                 )}
-            </div>
-
-            <div className="relative flex gap-2">
-              <div>
-                <Checkbox
-                  className="w-4 h-4"
-                  iconClassName="w-3 h-3"
-                  id="is_telemetry_enabled"
-                  onChange={() => handleFormChange("is_telemetry_enabled", !formData.is_telemetry_enabled)}
-                  checked={formData.is_telemetry_enabled}
-                />
-              </div>
-              <label className="text-13 text-tertiary font-medium cursor-pointer" htmlFor="is_telemetry_enabled">
-                Allow Plane to anonymously collect usage events.{" "}
-                <a
-                  tabIndex={-1}
-                  href="https://developers.plane.so/self-hosting/telemetry"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-13 font-medium text-blue-500 hover:text-blue-600 flex-shrink-0"
-                >
-                  See More
-                </a>
-              </label>
             </div>
 
             <div className="py-2">

@@ -262,7 +262,6 @@ export const ExportForm = observer(function ExportForm(props: Props) {
           variant="primary"
           type="submit"
           loading={exportLoading}
-          data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.EXPORT_BUTTON}
         >
           {exportLoading ? `${t("workspace_settings.settings.exports.exporting")}...` : t("export")}
         </Button>

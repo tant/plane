@@ -112,14 +112,12 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
                 },
                 disabled: !canPerformEmptyStateActions,
                 variant: "primary",
-                "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
               {
                 label: t("project_empty_state.cycle_work_items.cta_secondary"),
                 onClick: () => setCycleIssuesListModal(true),
                 disabled: !canPerformEmptyStateActions,
                 variant: "secondary",
-                "data-ph-element": WORK_ITEM_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON.CYCLE,
               },
             ]}
           />

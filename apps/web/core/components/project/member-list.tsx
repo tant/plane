@@ -99,7 +99,6 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
               onClick={() => {
                 setInviteModal(true);
               }}
-              data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
             >
               {t("add_member")}
             </Button>

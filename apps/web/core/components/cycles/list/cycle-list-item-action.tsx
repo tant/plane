@@ -319,7 +319,6 @@ export const CycleListItemAction = observer(function CycleListItemAction(props: 
       )}
       {isEditingAllowed && !cycleDetails.archived_at && (
         <FavoriteStar
-          data-ph-element={CYCLE_TRACKER_ELEMENTS.LIST_ITEM}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();

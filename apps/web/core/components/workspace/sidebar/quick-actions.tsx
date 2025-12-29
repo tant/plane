@@ -83,7 +83,6 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
           disabled={disabled}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          data-ph-element={SIDEBAR_TRACKER_ELEMENTS.CREATE_WORK_ITEM_BUTTON}
         />
       </div>
     </>

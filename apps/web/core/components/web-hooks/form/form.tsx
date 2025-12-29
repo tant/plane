@@ -96,7 +96,6 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
             size="lg"
             type="submit"
             loading={isSubmitting}
-            data-ph-element={WORKSPACE_SETTINGS_TRACKER_ELEMENTS.WEBHOOK_UPDATE_BUTTON}
           >
             {isSubmitting ? t("updating") : t("update")}
           </Button>

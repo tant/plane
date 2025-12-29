@@ -300,7 +300,6 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
       </div>
       <div className="flex flex-col gap-4">
         <Button
-          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
           size="xl"

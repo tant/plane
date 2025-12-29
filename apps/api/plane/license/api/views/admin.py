@@ -118,7 +118,6 @@ class InstanceAdminSignUpEndpoint(View):
         first_name = request.POST.get("first_name", False)
         last_name = request.POST.get("last_name", "")
         company_name = request.POST.get("company_name", "")
-        is_telemetry_enabled = request.POST.get("is_telemetry_enabled", True)
 
         # return error if the email and password is not present
         if not email or not password or not first_name:
@@ -130,7 +129,6 @@ class InstanceAdminSignUpEndpoint(View):
                     "first_name": first_name,
                     "last_name": last_name,
                     "company_name": company_name,
-                    "is_telemetry_enabled": is_telemetry_enabled,
                 },
             )
             url = urljoin(
@@ -155,7 +153,6 @@ class InstanceAdminSignUpEndpoint(View):
                     "first_name": first_name,
                     "last_name": last_name,
                     "company_name": company_name,
-                    "is_telemetry_enabled": is_telemetry_enabled,
                 },
             )
             url = urljoin(
@@ -175,7 +172,6 @@ class InstanceAdminSignUpEndpoint(View):
                     "first_name": first_name,
                     "last_name": last_name,
                     "company_name": company_name,
-                    "is_telemetry_enabled": is_telemetry_enabled,
                 },
             )
             url = urljoin(
@@ -194,7 +190,6 @@ class InstanceAdminSignUpEndpoint(View):
                         "first_name": first_name,
                         "last_name": last_name,
                         "company_name": company_name,
-                        "is_telemetry_enabled": is_telemetry_enabled,
                     },
                 )
                 url = urljoin(
@@ -226,7 +221,6 @@ class InstanceAdminSignUpEndpoint(View):
             # Make the setup flag True
             instance.is_setup_done = True
             instance.instance_name = company_name
-            instance.is_telemetry_enabled = is_telemetry_enabled
             instance.save()
 
             # get tokens for user

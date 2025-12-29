@@ -163,7 +163,6 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           </p>
           <button
             type="button"
-            data-ph-element={AUTH_TRACKER_ELEMENTS.REQUEST_NEW_CODE}
             onClick={() => generateNewCode(uniqueCodeFormData.email)}
             className={
               isRequestNewCodeDisabled
@@ -188,7 +187,6 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           className="w-full"
           size="xl"
           disabled={isButtonDisabled}
-          data-ph-element={AUTH_TRACKER_ELEMENTS.VERIFY_CODE}
         >
           {isRequestingNewCode ? (
             t("auth.common.unique_code.sending_code")

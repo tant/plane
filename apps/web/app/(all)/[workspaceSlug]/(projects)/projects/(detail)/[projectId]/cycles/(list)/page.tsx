@@ -107,7 +107,6 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
                   onClick: () => setCreateModal(true),
                   variant: "primary",
                   disabled: !hasMemberLevelPermission,
-                  "data-ph-element": CYCLE_TRACKER_ELEMENTS.EMPTY_STATE_ADD_BUTTON,
                 },
               ]}
             />

@@ -199,7 +199,6 @@ export const JiraGetImportDetail = observer(function JiraGetImportDetail() {
                 <div>
                   <button
                     type="button"
-                    data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
                     onClick={() => {
                       captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.CREATE_PROJECT_JIRA_IMPORT_DETAIL_PAGE });
                       toggleCreateProjectModal(true);

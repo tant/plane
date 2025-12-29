@@ -189,7 +189,6 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                       onClick={() => {
                         setIsProjectModalOpen(true);
                       }}
-                      data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_TOOLTIP}
                       className="hidden group-hover:inline-flex text-placeholder"
                       aria-label={t("aria_labels.projects_sidebar.create_new_project")}
                     />
@@ -271,7 +270,6 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
         {isAuthorizedUser && joinedProjects?.length === 0 && (
           <button
             type="button"
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.SIDEBAR_CREATE_PROJECT_BUTTON}
             className="w-full flex items-center gap-1.5 px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2 rounded-md"
             onClick={() => {
               toggleCreateProjectModal(true);

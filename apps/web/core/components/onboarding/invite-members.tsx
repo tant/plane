@@ -399,7 +399,6 @@ export function InviteMembers(props: Props) {
                 size="xl"
                 className="w-full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
-                data-ph-element={MEMBER_TRACKER_ELEMENTS.ONBOARDING_INVITE_MEMBER}
               >
                 {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
               </Button>

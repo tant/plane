@@ -197,7 +197,6 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
             onClick={() => {
               toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
             }}
-            data-ph-element={WORK_ITEM_TRACKER_ELEMENTS.HEADER_ADD_BUTTON.PROJECT_VIEW}
           >
             Add work item
           </Button>

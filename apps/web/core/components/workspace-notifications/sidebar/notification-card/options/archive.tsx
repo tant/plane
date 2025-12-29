@@ -57,7 +57,6 @@ export const NotificationItemArchiveOption = observer(function NotificationItemA
 
   return (
     <NotificationItemOptionButton
-      data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.ARCHIVE_UNARCHIVE_BUTTON}
       tooltipContent={
         data.archived_at ? t("notification.options.mark_unarchive") : t("notification.options.mark_archive")
       }

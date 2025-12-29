@@ -305,7 +305,6 @@ export const WorkspaceDetails = observer(function WorkspaceDetails() {
           {isAdmin && (
             <div className="flex items-center justify-between py-2">
               <Button
-                data-ph-element={WORKSPACE_TRACKER_ELEMENTS.UPDATE_WORKSPACE_BUTTON}
                 variant="primary"
                 size="lg"
                 onClick={(e) => {

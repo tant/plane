@@ -438,7 +438,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         <div className="flex items-center justify-between py-2">
           <>
             <Button
-              data-ph-element={PROJECT_TRACKER_ELEMENTS.UPDATE_PROJECT_BUTTON}
               variant="primary"
               size="lg"
               type="submit"

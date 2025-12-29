@@ -59,7 +59,6 @@ export const NotificationSidebarHeaderOptions = observer(function NotificationSi
         <IconButton
           size="base"
           variant="ghost"
-          data-ph-element={NOTIFICATION_TRACKER_ELEMENTS.MARK_ALL_AS_READ_BUTTON}
           icon={loader === ENotificationLoader.MARK_ALL_AS_READY ? Spinner : CheckCheck}
           onClick={() => {
             captureSuccess({

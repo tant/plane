@@ -31,7 +31,6 @@ function ProjectSettingsPage() {
         </Link>
         <Button
           onClick={() => toggleCreateProjectModal(true)}
-          data-ph-element={PROJECT_TRACKER_ELEMENTS.EMPTY_STATE_CREATE_PROJECT_BUTTON}
         >
           Start your first project
         </Button>

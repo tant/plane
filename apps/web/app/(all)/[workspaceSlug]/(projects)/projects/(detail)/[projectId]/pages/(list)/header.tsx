@@ -91,7 +91,6 @@ export const PagesListHeader = observer(function PagesListHeader() {
             size="lg"
             onClick={handleCreatePage}
             loading={isCreatingPage}
-            data-ph-element={PROJECT_TRACKER_ELEMENTS.CREATE_HEADER_BUTTON}
           >
             {isCreatingPage ? "Adding" : "Add page"}
           </Button>

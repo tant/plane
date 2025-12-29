@@ -158,7 +158,6 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
                 variant="primary"
                 size="lg"
                 onClick={() => setInviteModal(true)}
-                data-ph-element={MEMBER_TRACKER_ELEMENTS.HEADER_ADD_BUTTON}
               >
                 {t("workspace_settings.settings.members.add_member")}
               </Button>

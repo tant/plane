@@ -72,7 +72,6 @@ export function NameColumn(props: NameProps) {
                 <CustomMenu.MenuItem>
                   <div
                     className="flex items-center gap-x-1 cursor-pointer text-danger-primary font-medium"
-                    data-ph-element={MEMBER_TRACKER_ELEMENTS.PROJECT_MEMBER_TABLE_CONTEXT_MENU}
                     onClick={() => setRemoveMemberModal(rowData)}
                   >
                     <CircleMinus className="flex-shrink-0 size-3.5" />

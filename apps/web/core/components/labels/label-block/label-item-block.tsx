@@ -95,7 +95,6 @@ export function LabelItemBlock(props: ILabelItemBlock) {
                 onClick={() => {
                   handleLabelDelete(label);
                 }}
-                data-ph-element={PROJECT_SETTINGS_TRACKER_ELEMENTS.LABELS_DELETE_BUTTON}
               >
                 <CloseIcon className="size-3.5 flex-shrink-0 text-tertiary" />
               </button>

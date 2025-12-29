@@ -108,11 +108,6 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
           size="lg"
           onClick={handleRedirection}
           className="w-full"
-          data-ph-element={
-            isSubscriptionActive
-              ? WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_UPGRADE_BUTTON(subscriptionType)
-              : WORKSPACE_SETTINGS_TRACKER_ELEMENTS.BILLING_TALK_TO_SALES_BUTTON
-          }
         >
           {isSubscriptionActive ? `Upgrade to ${subscriptionName}` : t("common.upgrade_cta.talk_to_sales")}
         </Button>

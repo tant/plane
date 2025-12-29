@@ -36,7 +36,6 @@ export function ProjectFeatureToggle(props: Props) {
       onChange={() => handleSubmit(featureItem.key, featureItem.property)}
       disabled={disabled}
       size="sm"
-      data-ph-element={PROJECT_TRACKER_ELEMENTS.TOGGLE_FEATURE}
     />
   );
 }

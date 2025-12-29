@@ -111,7 +111,6 @@ export const ExtendedProjectSidebar = observer(function ExtendedProjectSidebar()
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button
                   type="button"
-                  data-ph-element={PROJECT_TRACKER_ELEMENTS.EXTENDED_SIDEBAR_ADD_BUTTON}
                   className="p-0.5 rounded-sm hover:bg-layer-1 flex-shrink-0 text-tertiary hover:text-secondary transition-colors"
                   onClick={() => {
                     setIsProjectModalOpen(true);

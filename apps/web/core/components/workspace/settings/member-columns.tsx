@@ -94,7 +94,6 @@ export function NameColumn(props: NameProps) {
                         setRemoveMemberModal(rowData);
                       }
                     }}
-                    data-ph-element={MEMBER_TRACKER_ELEMENTS.WORKSPACE_MEMBER_TABLE_CONTEXT_MENU}
                   >
                     <TrashIcon className="size-3.5 align-middle" /> {id === currentUser?.id ? "Leave " : "Remove "}
                   </div>

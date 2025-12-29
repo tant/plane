@@ -7,29 +7,20 @@ import { ToggleSwitch } from "@plane/ui";
 // hooks
 import { useInstance } from "@/hooks/store";
 
-type TIntercomConfig = {
-  isTelemetryEnabled: boolean;
-};
-
-export const IntercomConfig = observer(function IntercomConfig(props: TIntercomConfig) {
-  const { isTelemetryEnabled } = props;
+export const IntercomConfig = observer(function IntercomConfig() {
   // hooks
   const { instanceConfigurations, updateInstanceConfigurations, fetchInstanceConfigurations } = useInstance();
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // derived values
-  const isIntercomEnabled = isTelemetryEnabled
-    ? instanceConfigurations
-      ? instanceConfigurations?.find((config) => config.key === "IS_INTERCOM_ENABLED")?.value === "1"
-        ? true
-        : false
-      : undefined
-    : false;
+  const isIntercomEnabled = instanceConfigurations
+    ? instanceConfigurations?.find((config) => config.key === "IS_INTERCOM_ENABLED")?.value === "1"
+      ? true
+      : false
+    : undefined;
 
-  const { isLoading } = useSWR(isTelemetryEnabled ? "INSTANCE_CONFIGURATIONS" : null, () =>
-    isTelemetryEnabled ? fetchInstanceConfigurations() : null
-  );
+  const { isLoading } = useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   const initialLoader = isLoading && isIntercomEnabled === undefined;
 
@@ -60,8 +51,7 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
           <div className="grow">
             <div className="text-13 font-medium text-primary leading-5">Chat with us</div>
             <div className="text-11 font-regular text-tertiary leading-5">
-              Let your users chat with us via Intercom or another service. Toggling Telemetry off turns this off
-              automatically.
+              Let your users chat with us via Intercom or another service.
             </div>
           </div>
 
@@ -70,7 +60,7 @@ export const IntercomConfig = observer(function IntercomConfig(props: TIntercomC
               value={isIntercomEnabled ? true : false}
               onChange={enableIntercomConfig}
               size="sm"
-              disabled={!isTelemetryEnabled || isSubmitting || initialLoader}
+              disabled={isSubmitting || initialLoader}
             />
           </div>
         </div>

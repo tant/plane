@@ -285,7 +285,6 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
           </div>
         </div>
         <Button
-          data-ph-element={WORKSPACE_TRACKER_ELEMENTS.ONBOARDING_CREATE_WORKSPACE_BUTTON}
           variant="primary"
           type="submit"
           size="xl"
