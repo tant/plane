@@ -1,6 +1,7 @@
 node_modules
 .next
 .yarn
+.playwright-mcp
 
 ### NextJS ###
 # Dependencies
@@ -110,3 +111,4 @@ build/
 .react-router/
 temp/
 scripts/
+.mcp.json
