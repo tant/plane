@@ -38,41 +38,33 @@ Mở browser và vào Coolify server của bạn (ví dụ: `https://coolify.you
 ### Bước 3: Thêm Resource mới
 
 1. Trong project vừa tạo, click **+ Add New Resource**
-2. Chọn **Private Repository (with GitHub App)** hoặc **Public Repository**
+2. Chọn **Public Repository**
+3. Paste URL với branch cụ thể:
+   ```
+   https://github.com/your-username/plane@oss
+   ```
+   > **Lưu ý**: Thêm `@oss` để chỉ định branch `oss`
 
-   **Nếu repo private:**
-   - Chọn **GitHub App**
-   - Nếu chưa có, click **+ Add a new GitHub App** và làm theo hướng dẫn
-   - Cài đặt GitHub App vào repository của bạn
+4. Click **Continue**
 
-   **Nếu repo public:**
-   - Chọn **Public Repository**
-   - Paste URL: `https://github.com/your-username/plane`
-
-### Bước 4: Cấu hình Repository
-
-1. **Repository**: Chọn repo plane của bạn
-2. **Branch**: Nhập `oss`
-3. Click **Continue**
-
-### Bước 5: Chọn Build Pack
+### Bước 4: Chọn Build Pack
 
 1. Coolify mặc định chọn **Nixpacks**
 2. Click vào dropdown và chọn **Docker Compose**
 3. Click **Continue**
 
-### Bước 6: Cấu hình Docker Compose
+### Bước 5: Cấu hình Docker Compose
 
 1. **Base Directory**: `/` (giữ mặc định)
 2. **Docker Compose Location**: `deploy/coolify/docker-compose.dev.yml`
 3. Check **☑ Preserve Repository During Deployment** (quan trọng để mount files)
 4. Click **Continue**
 
-### Bước 7: Chờ Coolify load Compose file
+### Bước 6: Chờ Coolify load Compose file
 
 Coolify sẽ parse compose file và hiển thị danh sách services.
 
-### Bước 8: Cấu hình Domain cho Proxy service
+### Bước 7: Cấu hình Domain cho Proxy service
 
 1. Tìm service **proxy** trong danh sách
 2. Click vào **proxy**
@@ -84,7 +76,7 @@ Coolify sẽ parse compose file và hiển thị danh sách services.
 
 4. Click **Save**
 
-### Bước 9: Cấu hình Environment Variables
+### Bước 8: Cấu hình Environment Variables
 
 1. Vào tab **Environment Variables** (hoặc trong Settings)
 2. Coolify sẽ tự detect các biến từ compose file
@@ -116,7 +108,7 @@ AWS_SECRET_ACCESS_KEY=your-minio-secret
 
 4. Click **Save**
 
-### Bước 10: Deploy
+### Bước 9: Deploy
 
 1. Click nút **Deploy** (góc phải trên)
 2. Chờ Coolify thực hiện:
@@ -124,16 +116,16 @@ AWS_SECRET_ACCESS_KEY=your-minio-secret
    - Build 7 images từ source (lần đầu mất ~15-30 phút)
    - Start tất cả containers theo thứ tự dependency
 
-### Bước 11: Theo dõi Deployment
+### Bước 10: Theo dõi Deployment
 
 1. Click vào tab **Deployments** để xem logs real-time
 2. Khi thấy "Deployment successful", tiếp tục bước tiếp
 
-### Bước 12: Cấu hình SSL (tự động)
+### Bước 11: Cấu hình SSL (tự động)
 
 Coolify tự động cấu hình Let's Encrypt SSL cho domain của bạn.
 
-### Bước 13: Truy cập ứng dụng
+### Bước 12: Truy cập ứng dụng
 
 1. Mở browser: `https://dev.plane.yourdomain.com`
 2. Vào God Mode: `https://dev.plane.yourdomain.com/god-mode/`
