@@ -6,7 +6,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, ChevronRight, Link2, Paperclip, Users, Signal, CircleDot, ExternalLink, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Link2, Paperclip, Users, Signal, CircleDot, ExternalLink, Trash2, CalendarDays, RefreshCw, FileText, Plus, Edit3 } from "lucide-react";
 // plane imports
 import { STATE_GROUPS, MAX_FILE_SIZE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +14,7 @@ import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-ico
 import { OverviewIcon, StateGroupIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType, EIssuesStoreType } from "@plane/types";
-import type { IProject, TStateGroups, TProjectLink, TProjectLinkEditableFields, ICycle, IUserLite } from "@plane/types";
+import type { IProject, TStateGroups, TProjectLink, TProjectLinkEditableFields, ICycle, IUserLite, TProjectState, TProjectPriority, IProjectUpdate, TProjectUpdateCategory } from "@plane/types";
 import { Loader, Tooltip } from "@plane/ui";
 import { cn, getFileURL, calculateTimeAgo, convertBytesToSize } from "@plane/utils";
 // components
@@ -22,6 +22,8 @@ import { CoverImage } from "@/components/common/cover-image";
 import { ActivityMessage, IssueLink } from "@/components/core/activity";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { DateDropdown } from "@/components/dropdowns/date";
+import { PriorityDropdown } from "@/components/dropdowns/priority";
 // helpers
 import { handleCoverImageChange } from "@/helpers/cover-image.helper";
 // hooks
@@ -35,10 +37,31 @@ import { useUser } from "@/hooks/store/user";
 import { useCycle } from "@/hooks/store/use-cycle";
 // services
 import { ProjectService } from "@/services/project/project.service";
+import { ProjectUpdateService } from "@/services/project/project-update.service";
 // local components
-import { ProjectLinkModal, type TProjectLinkOperations } from "./link-modal";
+import type { TProjectLinkOperations } from "./link-modal";
+import { ProjectLinkModal } from "./link-modal";
 
 const projectService = new ProjectService();
+const projectUpdateService = new ProjectUpdateService();
+
+// Project update category options
+const PROJECT_UPDATE_CATEGORIES: { key: TProjectUpdateCategory; title: string; color: string }[] = [
+  { key: "progress", title: "Progress", color: "#0ea5e9" },
+  { key: "milestone", title: "Milestone", color: "#22c55e" },
+  { key: "blocker", title: "Blocker", color: "#ef4444" },
+  { key: "general", title: "General", color: "#6366f1" },
+];
+
+// Project state options
+const PROJECT_STATE_OPTIONS: { key: TProjectState; title: string; color: string }[] = [
+  { key: "draft", title: "Draft", color: "#94a3b8" },
+  { key: "planning", title: "Planning", color: "#6366f1" },
+  { key: "execution", title: "Execution", color: "#0ea5e9" },
+  { key: "monitoring", title: "Monitoring", color: "#f59e0b" },
+  { key: "completed", title: "Completed", color: "#22c55e" },
+  { key: "cancelled", title: "Cancelled", color: "#ef4444" },
+];
 
 type TProjectOverviewRootProps = {
   workspaceSlug: string;
@@ -59,8 +82,17 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const [_isUpdating, setIsUpdating] = useState(false);
   const [isMilestonesExpanded, setIsMilestonesExpanded] = useState(true);
-  const [activeTab, setActiveTab] = useState<"properties" | "links" | "activity">("properties");
+  const [activeTab, setActiveTab] = useState<"properties" | "updates" | "links" | "activity">("properties");
   const [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
+  // Project Updates state
+  const [isCreatingUpdate, setIsCreatingUpdate] = useState(false);
+  const [newUpdateTitle, setNewUpdateTitle] = useState("");
+  const [newUpdateDescription, setNewUpdateDescription] = useState("");
+  const [newUpdateCategory, setNewUpdateCategory] = useState<TProjectUpdateCategory>("general");
+  const [editingUpdateId, setEditingUpdateId] = useState<string | null>(null);
+  const [editingUpdateTitle, setEditingUpdateTitle] = useState("");
+  const [editingUpdateDescription, setEditingUpdateDescription] = useState("");
+  const [editingUpdateCategory, setEditingUpdateCategory] = useState<TProjectUpdateCategory>("general");
   // store hooks
   const { currentProjectDetails, updateProject } = useProject();
   const { projectStates } = useProjectState();
@@ -106,7 +138,11 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
   );
 
   // Fetch project activity (all work item activities in this project)
-  const { data: projectActivity } = useSWR(
+  const {
+    data: projectActivity,
+    mutate: mutateActivity,
+    isValidating: isActivityLoading,
+  } = useSWR(
     workspaceSlug && projectId ? `PROJECT_ACTIVITY_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId
       ? () =>
@@ -121,6 +157,20 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_ACTIVE_CYCLES_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId ? () => fetchActiveCycle(workspaceSlug, projectId) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // Fetch project updates (only if enabled)
+  const isProjectUpdatesEnabled = currentProjectDetails?.is_project_updates_enabled ?? false;
+  const {
+    data: projectUpdates,
+    mutate: mutateUpdates,
+    isValidating: isUpdatesLoading,
+  } = useSWR(
+    workspaceSlug && projectId && isProjectUpdatesEnabled ? `PROJECT_UPDATES_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId && isProjectUpdatesEnabled
+      ? () => projectUpdateService.fetchUpdates(workspaceSlug, projectId)
+      : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
@@ -445,6 +495,212 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
     [currentProjectDetails, workspaceSlug, projectId, updateProject, t]
   );
 
+  // Handle project state update
+  const handleProjectStateUpdate = useCallback(
+    async (state: TProjectState) => {
+      if (!currentProjectDetails) return;
+
+      try {
+        await updateProject(workspaceSlug, projectId, { project_state: state });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("toast.success"),
+          message: t("project_overview.state_updated"),
+        });
+      } catch (error) {
+        console.error("Error updating project state:", error);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("something_went_wrong"),
+        });
+      }
+    },
+    [currentProjectDetails, workspaceSlug, projectId, updateProject, t]
+  );
+
+  // Handle project priority update
+  const handlePriorityUpdate = useCallback(
+    async (priority: TProjectPriority) => {
+      if (!currentProjectDetails) return;
+
+      try {
+        await updateProject(workspaceSlug, projectId, { priority });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("toast.success"),
+          message: t("project_overview.priority_updated"),
+        });
+      } catch (error) {
+        console.error("Error updating project priority:", error);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("something_went_wrong"),
+        });
+      }
+    },
+    [currentProjectDetails, workspaceSlug, projectId, updateProject, t]
+  );
+
+  // Handle start date update
+  const handleStartDateUpdate = useCallback(
+    async (date: Date | null) => {
+      if (!currentProjectDetails) return;
+
+      try {
+        await updateProject(workspaceSlug, projectId, {
+          start_date: date ? date.toISOString().split("T")[0] : null,
+        });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("toast.success"),
+          message: t("project_overview.start_date_updated"),
+        });
+      } catch (error) {
+        console.error("Error updating start date:", error);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("something_went_wrong"),
+        });
+      }
+    },
+    [currentProjectDetails, workspaceSlug, projectId, updateProject, t]
+  );
+
+  // Handle target date update
+  const handleTargetDateUpdate = useCallback(
+    async (date: Date | null) => {
+      if (!currentProjectDetails) return;
+
+      try {
+        await updateProject(workspaceSlug, projectId, {
+          target_date: date ? date.toISOString().split("T")[0] : null,
+        });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("toast.success"),
+          message: t("project_overview.target_date_updated"),
+        });
+      } catch (error) {
+        console.error("Error updating target date:", error);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("something_went_wrong"),
+        });
+      }
+    },
+    [currentProjectDetails, workspaceSlug, projectId, updateProject, t]
+  );
+
+  // Project Updates handlers
+  const handleCreateUpdate = useCallback(async () => {
+    if (!newUpdateTitle.trim()) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("project_overview.update_title_required"),
+      });
+      return;
+    }
+
+    try {
+      await projectUpdateService.createUpdate(workspaceSlug, projectId, {
+        title: newUpdateTitle.trim(),
+        description: newUpdateDescription.trim(),
+        category: newUpdateCategory,
+      });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: t("project_overview.update_created"),
+      });
+      setNewUpdateTitle("");
+      setNewUpdateDescription("");
+      setNewUpdateCategory("general");
+      setIsCreatingUpdate(false);
+      void mutateUpdates();
+    } catch (error) {
+      console.error("Error creating update:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("something_went_wrong"),
+      });
+    }
+  }, [workspaceSlug, projectId, newUpdateTitle, newUpdateDescription, newUpdateCategory, mutateUpdates, t]);
+
+  const handleEditUpdate = useCallback(async (updateId: string) => {
+    if (!editingUpdateTitle.trim()) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("project_overview.update_title_required"),
+      });
+      return;
+    }
+
+    try {
+      await projectUpdateService.updateUpdate(workspaceSlug, projectId, updateId, {
+        title: editingUpdateTitle.trim(),
+        description: editingUpdateDescription.trim(),
+        category: editingUpdateCategory,
+      });
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: t("project_overview.update_updated"),
+      });
+      setEditingUpdateId(null);
+      setEditingUpdateTitle("");
+      setEditingUpdateDescription("");
+      setEditingUpdateCategory("general");
+      void mutateUpdates();
+    } catch (error) {
+      console.error("Error updating update:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("something_went_wrong"),
+      });
+    }
+  }, [workspaceSlug, projectId, editingUpdateTitle, editingUpdateDescription, editingUpdateCategory, mutateUpdates, t]);
+
+  const handleDeleteUpdate = useCallback(async (updateId: string) => {
+    try {
+      await projectUpdateService.deleteUpdate(workspaceSlug, projectId, updateId);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: t("project_overview.update_deleted"),
+      });
+      void mutateUpdates();
+    } catch (error) {
+      console.error("Error deleting update:", error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("something_went_wrong"),
+      });
+    }
+  }, [workspaceSlug, projectId, mutateUpdates, t]);
+
+  const startEditingUpdate = useCallback((update: IProjectUpdate) => {
+    setEditingUpdateId(update.id);
+    setEditingUpdateTitle(update.title);
+    setEditingUpdateDescription(update.description);
+    setEditingUpdateCategory(update.category);
+  }, []);
+
+  const cancelEditingUpdate = useCallback(() => {
+    setEditingUpdateId(null);
+    setEditingUpdateTitle("");
+    setEditingUpdateDescription("");
+    setEditingUpdateCategory("general");
+  }, []);
+
   // Get project lead ID
   const projectLeadId = useMemo(() => {
     if (!currentProjectDetails?.project_lead) return undefined;
@@ -712,6 +968,17 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
               >
                 <CircleDot className={cn("h-4 w-4 mx-auto", activeTab === "properties" ? "text-accent-primary" : "text-tertiary")} />
               </button>
+              {isProjectUpdatesEnabled && (
+                <button
+                  onClick={() => setActiveTab("updates")}
+                  className={cn(
+                    "flex-1 py-2 text-center",
+                    activeTab === "updates" ? "border-b-2 border-accent-primary" : ""
+                  )}
+                >
+                  <FileText className={cn("h-4 w-4 mx-auto", activeTab === "updates" ? "text-accent-primary" : "text-tertiary")} />
+                </button>
+              )}
               <button
                 onClick={() => setActiveTab("links")}
                 className={cn(
@@ -737,6 +1004,44 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
               <div className="p-4">
                 <h5 className="text-xs font-medium text-secondary mb-3">{t("project_overview.properties")}</h5>
                 <div className="space-y-3">
+                  {/* State */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-secondary">
+                      <CircleDot className="h-3.5 w-3.5" />
+                      <span>{t("project_overview.state")}</span>
+                    </div>
+                    <div className="relative">
+                      <select
+                        value={currentProjectDetails.project_state || "draft"}
+                        onChange={(e) => handleProjectStateUpdate(e.target.value as TProjectState)}
+                        className="appearance-none bg-transparent text-sm px-2 py-1 pr-6 rounded hover:bg-layer-2 cursor-pointer border-0 focus:outline-none focus:ring-0"
+                      >
+                        {PROJECT_STATE_OPTIONS.map((option) => (
+                          <option key={option.key} value={option.key}>
+                            {option.title}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 h-3 w-3 text-tertiary pointer-events-none" />
+                    </div>
+                  </div>
+
+                  {/* Priority */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-secondary">
+                      <Signal className="h-3.5 w-3.5" />
+                      <span>{t("priority")}</span>
+                    </div>
+                    <PriorityDropdown
+                      value={currentProjectDetails.priority || "none"}
+                      onChange={(val) => handlePriorityUpdate(val as TProjectPriority)}
+                      buttonVariant="transparent-with-text"
+                      buttonClassName="!px-2 !py-1 text-sm"
+                      buttonContainerClassName="w-auto"
+                      highlightUrgent={false}
+                    />
+                  </div>
+
                   {/* Lead */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-secondary">
@@ -767,26 +1072,238 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                     </span>
                   </div>
 
-                  {/* Identifier */}
+                  {/* Start Date */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-secondary">
-                      <CircleDot className="h-3.5 w-3.5" />
-                      <span>{t("project_settings.general.identifier")}</span>
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      <span>{t("project_overview.start_date")}</span>
                     </div>
-                    <span className="text-sm font-medium">{currentProjectDetails.identifier}</span>
+                    <DateDropdown
+                      value={currentProjectDetails.start_date || null}
+                      onChange={handleStartDateUpdate}
+                      placeholder={t("none")}
+                      buttonVariant="transparent-with-text"
+                      buttonClassName="!px-2 !py-1 text-sm"
+                      buttonContainerClassName="w-auto"
+                      maxDate={currentProjectDetails.target_date ? new Date(currentProjectDetails.target_date) : undefined}
+                    />
                   </div>
 
-                  {/* Network (Public/Private) */}
+                  {/* Due Date */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-secondary">
-                      <Signal className="h-3.5 w-3.5" />
-                      <span>{t("project_settings.general.network")}</span>
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      <span>{t("project_overview.due_date")}</span>
                     </div>
-                    <span className="text-sm">
-                      {currentProjectDetails.network === 2 ? t("public") : t("private")}
-                    </span>
+                    <DateDropdown
+                      value={currentProjectDetails.target_date || null}
+                      onChange={handleTargetDateUpdate}
+                      placeholder={t("none")}
+                      buttonVariant="transparent-with-text"
+                      buttonClassName="!px-2 !py-1 text-sm"
+                      buttonContainerClassName="w-auto"
+                      minDate={currentProjectDetails.start_date ? new Date(currentProjectDetails.start_date) : undefined}
+                    />
                   </div>
                 </div>
+              </div>
+            )}
+
+            {activeTab === "updates" && isProjectUpdatesEnabled && (
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h5 className="text-xs font-medium text-secondary">{t("project_overview.updates")}</h5>
+                  <div className="flex items-center gap-2">
+                    <Tooltip tooltipContent={t("refresh")}>
+                      <button
+                        type="button"
+                        onClick={() => mutateUpdates()}
+                        disabled={isUpdatesLoading}
+                        className="p-1 rounded hover:bg-layer-2 text-tertiary hover:text-secondary transition-colors disabled:opacity-50"
+                      >
+                        <RefreshCw className={cn("h-3.5 w-3.5", isUpdatesLoading && "animate-spin")} />
+                      </button>
+                    </Tooltip>
+                    {!isCreatingUpdate && (
+                      <button
+                        type="button"
+                        onClick={() => setIsCreatingUpdate(true)}
+                        className="text-xs text-accent-primary hover:underline flex items-center gap-1"
+                      >
+                        <Plus className="h-3 w-3" />
+                        {t("project_overview.add_update")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Create new update form */}
+                {isCreatingUpdate && (
+                  <div className="mb-4 p-3 rounded-lg border border-subtle bg-surface-2">
+                    <input
+                      type="text"
+                      value={newUpdateTitle}
+                      onChange={(e) => setNewUpdateTitle(e.target.value)}
+                      placeholder={t("project_overview.update_title_placeholder")}
+                      className="w-full bg-transparent text-sm font-medium border-0 focus:outline-none focus:ring-0 p-0 mb-2"
+                    />
+                    <textarea
+                      value={newUpdateDescription}
+                      onChange={(e) => setNewUpdateDescription(e.target.value)}
+                      placeholder={t("project_overview.update_description_placeholder")}
+                      className="w-full bg-transparent text-xs text-secondary border-0 focus:outline-none focus:ring-0 p-0 resize-none"
+                      rows={3}
+                    />
+                    <div className="flex items-center justify-between mt-3">
+                      <select
+                        value={newUpdateCategory}
+                        onChange={(e) => setNewUpdateCategory(e.target.value as TProjectUpdateCategory)}
+                        className="text-xs bg-transparent border border-subtle rounded px-2 py-1"
+                      >
+                        {PROJECT_UPDATE_CATEGORIES.map((cat) => (
+                          <option key={cat.key} value={cat.key}>{cat.title}</option>
+                        ))}
+                      </select>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsCreatingUpdate(false);
+                            setNewUpdateTitle("");
+                            setNewUpdateDescription("");
+                            setNewUpdateCategory("general");
+                          }}
+                          className="text-xs text-secondary hover:text-primary"
+                        >
+                          {t("cancel")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCreateUpdate}
+                          className="text-xs text-accent-primary hover:underline"
+                        >
+                          {t("create")}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Updates list */}
+                {projectUpdates && projectUpdates.length > 0 ? (
+                  <div className="space-y-3">
+                    {projectUpdates.map((update) => {
+                      const categoryInfo = PROJECT_UPDATE_CATEGORIES.find((c) => c.key === update.category);
+                      const isEditing = editingUpdateId === update.id;
+
+                      if (isEditing) {
+                        return (
+                          <div key={update.id} className="p-3 rounded-lg border border-subtle bg-surface-2">
+                            <input
+                              type="text"
+                              value={editingUpdateTitle}
+                              onChange={(e) => setEditingUpdateTitle(e.target.value)}
+                              placeholder={t("project_overview.update_title_placeholder")}
+                              className="w-full bg-transparent text-sm font-medium border-0 focus:outline-none focus:ring-0 p-0 mb-2"
+                            />
+                            <textarea
+                              value={editingUpdateDescription}
+                              onChange={(e) => setEditingUpdateDescription(e.target.value)}
+                              placeholder={t("project_overview.update_description_placeholder")}
+                              className="w-full bg-transparent text-xs text-secondary border-0 focus:outline-none focus:ring-0 p-0 resize-none"
+                              rows={3}
+                            />
+                            <div className="flex items-center justify-between mt-3">
+                              <select
+                                value={editingUpdateCategory}
+                                onChange={(e) => setEditingUpdateCategory(e.target.value as TProjectUpdateCategory)}
+                                className="text-xs bg-transparent border border-subtle rounded px-2 py-1"
+                              >
+                                {PROJECT_UPDATE_CATEGORIES.map((cat) => (
+                                  <option key={cat.key} value={cat.key}>{cat.title}</option>
+                                ))}
+                              </select>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={cancelEditingUpdate}
+                                  className="text-xs text-secondary hover:text-primary"
+                                >
+                                  {t("cancel")}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditUpdate(update.id)}
+                                  className="text-xs text-accent-primary hover:underline"
+                                >
+                                  {t("save")}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div key={update.id} className="p-3 rounded-lg border border-subtle hover:bg-layer-2 transition-colors group">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span
+                                  className="h-2 w-2 rounded-full shrink-0"
+                                  style={{ backgroundColor: categoryInfo?.color || "#6366f1" }}
+                                />
+                                <span className="text-xs text-tertiary">{categoryInfo?.title || "General"}</span>
+                              </div>
+                              <h6 className="text-sm font-medium text-primary truncate">{update.title}</h6>
+                              {update.description && (
+                                <p className="text-xs text-secondary mt-1 line-clamp-2">{update.description}</p>
+                              )}
+                              <div className="flex items-center gap-2 mt-2 text-[10px] text-tertiary">
+                                {update.created_by_detail && (
+                                  <span>{update.created_by_detail.display_name}</span>
+                                )}
+                                <span>•</span>
+                                <span>{calculateTimeAgo(update.created_at)}</span>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Tooltip tooltipContent={t("edit")}>
+                                <button
+                                  type="button"
+                                  onClick={() => startEditingUpdate(update)}
+                                  className="p-1 rounded hover:bg-layer-3"
+                                >
+                                  <Edit3 className="h-3 w-3 text-tertiary" />
+                                </button>
+                              </Tooltip>
+                              <Tooltip tooltipContent={t("delete")}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteUpdate(update.id)}
+                                  className="p-1 rounded hover:bg-layer-3"
+                                >
+                                  <Trash2 className="h-3 w-3 text-red-500" />
+                                </button>
+                              </Tooltip>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : isUpdatesLoading ? (
+                  <Loader className="space-y-3">
+                    <Loader.Item height="60px" />
+                    <Loader.Item height="60px" />
+                  </Loader>
+                ) : (
+                  <div className="text-center py-8">
+                    <FileText className="h-8 w-8 mx-auto text-tertiary mb-2" />
+                    <p className="text-sm text-secondary">{t("project_overview.no_updates")}</p>
+                    <p className="text-xs text-tertiary mt-1">{t("project_overview.no_updates_description")}</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -903,9 +1420,21 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
 
             {activeTab === "activity" && (
               <div className="p-4">
-                <h5 className="text-xs font-medium text-secondary mb-3">
-                  {t("project_overview.activity")}
-                </h5>
+                <div className="flex items-center justify-between mb-3">
+                  <h5 className="text-xs font-medium text-secondary">
+                    {t("project_overview.activity")}
+                  </h5>
+                  <Tooltip tooltipContent={t("refresh")}>
+                    <button
+                      type="button"
+                      onClick={() => mutateActivity()}
+                      disabled={isActivityLoading}
+                      className="p-1 rounded hover:bg-layer-2 text-tertiary hover:text-secondary transition-colors disabled:opacity-50"
+                    >
+                      <RefreshCw className={cn("h-3.5 w-3.5", isActivityLoading && "animate-spin")} />
+                    </button>
+                  </Tooltip>
+                </div>
                 {projectActivity ? (
                   projectActivity.results.length > 0 ? (
                     <div className="space-y-3">

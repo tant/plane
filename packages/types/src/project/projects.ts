@@ -35,6 +35,27 @@ export interface IPartialProject {
   updated_by?: string;
 }
 
+export type TProjectState = "draft" | "planning" | "execution" | "monitoring" | "completed" | "cancelled";
+
+export type TProjectPriority = "urgent" | "high" | "medium" | "low" | "none";
+
+export type TProjectUpdateCategory = "progress" | "milestone" | "blocker" | "general";
+
+export interface IProjectUpdate {
+  id: string;
+  title: string;
+  description: string;
+  description_html: string | null;
+  description_stripped: string | null;
+  category: TProjectUpdateCategory;
+  created_by: string | null;
+  created_by_detail?: IUserLite | null;
+  created_at: string;
+  updated_at: string;
+  project: string;
+  workspace: string;
+}
+
 export interface IProject extends IPartialProject {
   archive_in?: number;
   close_in?: number;
@@ -52,6 +73,16 @@ export interface IProject extends IPartialProject {
   members?: string[];
   timezone?: string;
   next_work_item_sequence?: number;
+  // Project state and timeline
+  project_state?: TProjectState;
+  priority?: TProjectPriority | null;
+  start_date?: string | null;
+  target_date?: string | null;
+  // Premium features
+  is_project_updates_enabled?: boolean;
+  is_epic_enabled?: boolean;
+  is_time_tracking_enabled?: boolean;
+  is_issue_type_enabled?: boolean;
 }
 
 export type TProjectAnalyticsCountParams = {

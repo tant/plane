@@ -1877,6 +1877,8 @@ export default {
       description: "Consolidated tracking and progress monitoring for this project",
       turn_on: "Turn on Project Updates",
       turn_on_description: "See all updates on demand from anyone in this project. Easily track updates across four preset categories.",
+      enabled: "Project updates enabled successfully",
+      disabled: "Project updates disabled successfully",
     },
     empty_state: {
       labels: {
@@ -2796,7 +2798,22 @@ export default {
     attachment_removed: "Attachment removed successfully",
     file_too_large: "File size exceeds the maximum limit",
     lead_updated: "Project lead updated successfully",
+    state_updated: "Project state updated successfully",
+    priority_updated: "Project priority updated successfully",
+    start_date_updated: "Start date updated successfully",
+    target_date_updated: "Due date updated successfully",
     activity_by: "Activity by",
     activity: "Activity",
+    // Project Updates
+    updates: "Updates",
+    add_update: "Add update",
+    update_title_placeholder: "Update title",
+    update_description_placeholder: "Describe this update...",
+    update_title_required: "Update title is required",
+    update_created: "Update created successfully",
+    update_updated: "Update saved successfully",
+    update_deleted: "Update deleted successfully",
+    no_updates: "No updates yet",
+    no_updates_description: "Post updates to keep everyone informed about project progress.",
   },
 } as const;
