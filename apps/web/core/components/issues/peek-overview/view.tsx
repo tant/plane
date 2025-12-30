@@ -1,4 +1,3 @@
-import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
@@ -7,6 +6,12 @@ import type { EditorRefApi } from "@plane/editor";
 import type { TIssueServiceType, TNameDescriptionLoader } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
+// ce components
+import {
+  EpicProgressSection,
+  EpicActionButtons,
+  EpicWorkItemsSection,
+} from "@/plane-web/components/epics/epic-peek-overview";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import useKeypress from "@/hooks/use-keypress";
@@ -186,15 +191,39 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       setIsSubmitting={(value) => setIsSubmitting(value)}
                     />
 
-                    <div className="py-2">
-                      <IssueDetailWidgets
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        issueId={issueId}
-                        disabled={disabled || is_archived}
-                        issueServiceType={issueServiceType}
-                      />
-                    </div>
+                    {/* Epic-specific sections */}
+                    {issueServiceType === EIssueServiceType.EPICS && (
+                      <>
+                        <EpicProgressSection workspaceSlug={workspaceSlug} projectId={projectId} epicId={issueId} />
+
+                        <EpicActionButtons
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          epicId={issueId}
+                          disabled={disabled || is_archived}
+                        />
+
+                        <EpicWorkItemsSection
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          epicId={issueId}
+                          disabled={disabled || is_archived}
+                        />
+                      </>
+                    )}
+
+                    {/* Regular issue widgets (hidden for Epics since we have custom sections) */}
+                    {issueServiceType !== EIssueServiceType.EPICS && (
+                      <div className="py-2">
+                        <IssueDetailWidgets
+                          workspaceSlug={workspaceSlug}
+                          projectId={projectId}
+                          issueId={issueId}
+                          disabled={disabled || is_archived}
+                          issueServiceType={issueServiceType}
+                        />
+                      </div>
+                    )}
 
                     <PeekOverviewProperties
                       workspaceSlug={workspaceSlug}
@@ -227,15 +256,39 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
 
-                        <div className="py-2">
-                          <IssueDetailWidgets
-                            workspaceSlug={workspaceSlug}
-                            projectId={projectId}
-                            issueId={issueId}
-                            disabled={disabled}
-                            issueServiceType={issueServiceType}
-                          />
-                        </div>
+                        {/* Epic-specific sections for full-screen mode */}
+                        {issueServiceType === EIssueServiceType.EPICS && (
+                          <>
+                            <EpicProgressSection workspaceSlug={workspaceSlug} projectId={projectId} epicId={issueId} />
+
+                            <EpicActionButtons
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              epicId={issueId}
+                              disabled={disabled || is_archived}
+                            />
+
+                            <EpicWorkItemsSection
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              epicId={issueId}
+                              disabled={disabled || is_archived}
+                            />
+                          </>
+                        )}
+
+                        {/* Regular issue widgets (hidden for Epics) */}
+                        {issueServiceType !== EIssueServiceType.EPICS && (
+                          <div className="py-2">
+                            <IssueDetailWidgets
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              issueId={issueId}
+                              disabled={disabled}
+                              issueServiceType={issueServiceType}
+                            />
+                          </div>
+                        )}
 
                         <IssueActivity
                           workspaceSlug={workspaceSlug}
