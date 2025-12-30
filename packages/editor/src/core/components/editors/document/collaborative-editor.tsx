@@ -143,6 +143,7 @@ function CollaborativeDocumentEditor(props: ICollaborativeDocumentEditorProps) {
       serverUrl={realtimeConfig.url}
       authToken={token}
       onStateChange={serverHandler?.onStateChange}
+      onCollaboratorsChange={serverHandler?.onCollaboratorsChange}
     >
       <CollaborativeDocumentEditorInner {...props} />
     </CollaborationProvider>

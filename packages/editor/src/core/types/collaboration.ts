@@ -32,6 +32,17 @@ export type CollaborationState = {
   isServerDisconnected: boolean;
 };
 
+/**
+ * Represents a collaborator currently viewing/editing a document.
+ * Derived from Yjs awareness state.
+ */
+export type TCollaborator = {
+  id: string;
+  name: string;
+  color: string;
+};
+
 export type TServerHandler = {
   onStateChange: (state: CollaborationState) => void;
+  onCollaboratorsChange?: (collaborators: TCollaborator[]) => void;
 };

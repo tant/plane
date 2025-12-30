@@ -6,7 +6,7 @@ import { IndexeddbPersistence } from "y-indexeddb";
 // yjs
 import type * as Y from "yjs";
 // types
-import type { CollaborationState, CollabStage, CollaborationError } from "@/types/collaboration";
+import type { CollaborationState, CollabStage, CollaborationError, TCollaborator } from "@/types/collaboration";
 
 // Helper to check if a close code indicates a forced close
 const isForcedCloseCode = (code: number | undefined): boolean => {
@@ -20,6 +20,7 @@ type UseYjsSetupArgs = {
   serverUrl: string;
   authToken: string;
   onStateChange?: (state: CollaborationState) => void;
+  onCollaboratorsChange?: (collaborators: TCollaborator[]) => void;
   options?: {
     maxConnectionAttempts?: number;
   };
@@ -27,7 +28,7 @@ type UseYjsSetupArgs = {
 
 const DEFAULT_MAX_RETRIES = 3;
 
-export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseYjsSetupArgs) => {
+export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange, onCollaboratorsChange }: UseYjsSetupArgs) => {
   // Current collaboration stage
   const [stage, setStage] = useState<CollabStage>({ kind: "initial" });
 
@@ -285,6 +286,53 @@ export const useYjsSetup = ({ docId, serverUrl, authToken, onStateChange }: UseY
       }
     };
   }, [docId, yjsSession]);
+
+  // Awareness change listener for collaborators
+  const collaboratorsCallbackRef = useRef(onCollaboratorsChange);
+  collaboratorsCallbackRef.current = onCollaboratorsChange;
+
+  useEffect(() => {
+    if (!yjsSession) return;
+
+    const { provider } = yjsSession;
+    const awareness = provider.awareness;
+    if (!awareness) return;
+
+    const getCollaborators = (): TCollaborator[] => {
+      const states = awareness.getStates();
+      const collaborators: TCollaborator[] = [];
+      const localClientId = awareness.clientID;
+
+      states.forEach((state, clientId) => {
+        // Skip local client and empty states
+        if (clientId === localClientId || !state.user) return;
+
+        collaborators.push({
+          id: state.user.id || String(clientId),
+          name: state.user.name || "Anonymous",
+          color: state.user.color || "#6b7280",
+        });
+      });
+
+      return collaborators;
+    };
+
+    const handleAwarenessChange = () => {
+      if (collaboratorsCallbackRef.current) {
+        collaboratorsCallbackRef.current(getCollaborators());
+      }
+    };
+
+    // Initial call
+    handleAwarenessChange();
+
+    // Listen for awareness changes
+    awareness.on("change", handleAwarenessChange);
+
+    return () => {
+      awareness.off("change", handleAwarenessChange);
+    };
+  }, [yjsSession]);
 
   // Observe Y.Doc content changes to update hasCachedContent (catches fallback scenario)
   useEffect(() => {
