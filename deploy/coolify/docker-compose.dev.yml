@@ -57,8 +57,8 @@ services:
   # ===========================================
   proxy:
     build:
-      context: .
-      dockerfile: ./apps/proxy/Dockerfile.ce
+      context: ../../apps/proxy
+      dockerfile: Dockerfile.ce
     restart: always
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-10485760}
@@ -77,7 +77,7 @@ services:
   # ===========================================
   web:
     build:
-      context: .
+      context: ../..
       dockerfile: ./apps/web/Dockerfile.web
     restart: always
     depends_on:
@@ -88,7 +88,7 @@ services:
 
   admin:
     build:
-      context: .
+      context: ../..
       dockerfile: ./apps/admin/Dockerfile.admin
     restart: always
     depends_on:
@@ -99,7 +99,7 @@ services:
 
   space:
     build:
-      context: .
+      context: ../..
       dockerfile: ./apps/space/Dockerfile.space
     restart: always
     depends_on:
@@ -110,7 +110,7 @@ services:
 
   live:
     build:
-      context: .
+      context: ../..
       dockerfile: ./apps/live/Dockerfile.live
     restart: always
     environment:
@@ -132,7 +132,7 @@ services:
   # ===========================================
   migrator:
     build:
-      context: ./apps/api
+      context: ../../apps/api
       dockerfile: Dockerfile.api
     command: ./bin/docker-entrypoint-migrator.sh
     restart: "no"
@@ -151,7 +151,7 @@ services:
 
   api:
     build:
-      context: ./apps/api
+      context: ../../apps/api
       dockerfile: Dockerfile.api
     command: ./bin/docker-entrypoint-api.sh
     restart: always
@@ -177,7 +177,7 @@ services:
 
   worker:
     build:
-      context: ./apps/api
+      context: ../../apps/api
       dockerfile: Dockerfile.api
     command: ./bin/docker-entrypoint-worker.sh
     restart: always
@@ -191,7 +191,7 @@ services:
 
   beat-worker:
     build:
-      context: ./apps/api
+      context: ../../apps/api
       dockerfile: Dockerfile.api
     command: ./bin/docker-entrypoint-beat.sh
     restart: always
