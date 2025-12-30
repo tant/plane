@@ -1880,6 +1880,23 @@ export default {
       enabled: "Project updates enabled successfully",
       disabled: "Project updates disabled successfully",
     },
+    epics: {
+      label: "Epics",
+      heading: "Epics",
+      description: "Manage high-level work items that span multiple sprints or cycles",
+      turn_on: "Turn on Epics",
+      turn_on_description: "Enable epics to group and track large features or initiatives across your project.",
+      enabled: "Epics enabled successfully",
+      disabled: "Epics disabled successfully",
+      properties: "Epic Properties",
+      properties_description: "Customize the properties available for epics in this project",
+      add_custom_properties: "Add custom properties",
+      custom_properties_empty: "No custom properties defined yet. Add properties to capture additional epic information.",
+      add_new_property: "Add property",
+      not_found: "Epic not found",
+      not_found_description: "The epic you are looking for does not exist or has been deleted.",
+      view_all: "View all epics",
+    },
     empty_state: {
       labels: {
         title: "No labels yet",
