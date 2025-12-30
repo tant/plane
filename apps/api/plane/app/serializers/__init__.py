@@ -129,3 +129,9 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .issue_type import (
+    IssueTypeSerializer,
+    IssueTypeLiteSerializer,
+    ProjectIssueTypeSerializer,
+)

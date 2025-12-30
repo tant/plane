@@ -234,3 +234,13 @@ from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
+
+from .workspace.issue_type import (
+    WorkspaceIssueTypesEndpoint,
+    WorkspaceIssueTypeViewSet,
+)
+
+from .issue.issue_type import (
+    ProjectIssueTypesEndpoint,
+    ProjectIssueTypeViewSet,
+)

@@ -131,6 +131,6 @@ export const ESTIMATE_SYSTEMS: TEstimateSystems = {
       },
     },
     is_available: true,
-    is_ee: true,
+    is_ee: false,
   },
 };

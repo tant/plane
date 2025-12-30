@@ -35,6 +35,8 @@ import type { IInstanceStore } from "./instance.store";
 import { InstanceStore } from "./instance.store";
 import type { IIssueRootStore } from "./issue/root.store";
 import { IssueRootStore } from "./issue/root.store";
+import type { IIssueTypeStore } from "./issue-type.store";
+import { IssueTypeStore } from "./issue-type.store";
 import type { ILabelStore } from "./label.store";
 import { LabelStore } from "./label.store";
 import type { IMemberRootStore } from "./member";
@@ -76,6 +78,7 @@ export class CoreRootStore {
   projectView: IProjectViewStore;
   globalView: IGlobalViewStore;
   issue: IIssueRootStore;
+  issueType: IIssueTypeStore;
   state: IStateStore;
   label: ILabelStore;
   dashboard: IDashboardStore;
@@ -112,6 +115,7 @@ export class CoreRootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this as unknown as RootStore);
+    this.issueType = new IssueTypeStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);
@@ -146,6 +150,7 @@ export class CoreRootStore {
     this.projectView = new ProjectViewStore(this);
     this.globalView = new GlobalViewStore(this);
     this.issue = new IssueRootStore(this as unknown as RootStore);
+    this.issueType = new IssueTypeStore(this as unknown as RootStore);
     this.state = new StateStore(this as unknown as RootStore);
     this.label = new LabelStore(this);
     this.dashboard = new DashboardStore(this);

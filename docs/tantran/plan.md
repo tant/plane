@@ -10,10 +10,10 @@
 | # | Tính năng | Độ khó | Frontend | Backend | DB Migration | External Service | Rủi ro | Triển khai | Ghi chú |
 |---|-----------|--------|----------|---------|--------------|------------------|--------|------------|---------|
 | **PRO FEATURES** |
-| 1 | Work Item Types | 🟢 DỄ | Bật component | Model `IssueType` đã có | ❌ Không cần | ❌ Không | Thấp | ⏳ Chưa | Model có sẵn, chỉ cần bật UI toggle |
+| 1 | Work Item Types | 🟢 DỄ | Bật component | Model `IssueType` đã có | ❌ Không cần | ❌ Không | Thấp | ✅ Xong | Đã implement: Store, Service, UI (Select, Filter, Switcher) với checkmark icon |
 | 2 | Edit/Delete Estimates | 🟢 DỄ | Bật modal + buttons | API đã có | ❌ Không cần | ❌ Không | Thấp | ⏳ Chưa | Logic có sẵn trong core |
-| 3 | Time Estimate System | 🟢 DỄ V| Đổi `is_ee: false` | Đã support | ❌ Không cần | ❌ Không | Thấp | ⏳ Chưa | Chỉ cần đổi 1 flag |
-| 4 | Active Cycles | 🟢 DỄ | Xóa UpgradeBadge | Đã có endpoint | ❌ Không cần | ❌ Không | Thấp | ⏳ Chưa | Chỉ cần bỏ badge |
+| 3 | Time Estimate System | 🟢 DỄ | Đổi `is_ee: false` | Đã support | ❌ Không cần | ❌ Không | Thấp | ✅ Xong | Đã đổi flag trong issue-properties.constant.ts |
+| 4 | Active Cycles | 🟢 DỄ | Xóa UpgradeBadge | Đã có endpoint | ❌ Không cần | ❌ Không | Thấp | ✅ Xong | Đã xóa upgrade page, bật tính năng |
 | 5 | Move Pages | 🟢 DỄ | Modal | API đã có | ❌ Không cần | ❌ Không | Thấp | ⏳ Chưa | Chỉ update project_id |
 | 6 | Page Collaborators | 🟢 DỄ | List component | Hocuspocus có sẵn | ❌ Không cần | ❌ Không | Thấp | ⏳ Chưa | Real-time đã có |
 | 7 | Epics | 🟡 TB | Modal + Timeline UI | Model có (`is_epic` flag) | ❌ Không cần | ❌ Không | TB | ⏳ Chưa | Cần implement timeline view |
