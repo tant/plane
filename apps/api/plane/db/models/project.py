@@ -33,6 +33,44 @@ class ProjectNetwork(Enum):
         return [(0, "Secret"), (2, "Public")]
 
 
+class ProjectState(Enum):
+    DRAFT = "draft"
+    PLANNING = "planning"
+    EXECUTION = "execution"
+    MONITORING = "monitoring"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+    @classmethod
+    def choices(cls):
+        return [
+            ("draft", "Draft"),
+            ("planning", "Planning"),
+            ("execution", "Execution"),
+            ("monitoring", "Monitoring"),
+            ("completed", "Completed"),
+            ("cancelled", "Cancelled"),
+        ]
+
+
+class ProjectPriority(Enum):
+    URGENT = "urgent"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    NONE = "none"
+
+    @classmethod
+    def choices(cls):
+        return [
+            ("urgent", "Urgent"),
+            ("high", "High"),
+            ("medium", "Medium"),
+            ("low", "Low"),
+            ("none", "None"),
+        ]
+
+
 def get_default_props():
     return {
         "filters": {
@@ -87,13 +125,15 @@ class Project(BaseModel):
     )
     emoji = models.CharField(max_length=255, null=True, blank=True)
     icon_prop = models.JSONField(null=True)
-    module_view = models.BooleanField(default=False)
-    cycle_view = models.BooleanField(default=False)
-    issue_views_view = models.BooleanField(default=False)
+    module_view = models.BooleanField(default=True)
+    cycle_view = models.BooleanField(default=True)
+    issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
     intake_view = models.BooleanField(default=False)
-    is_time_tracking_enabled = models.BooleanField(default=False)
-    is_issue_type_enabled = models.BooleanField(default=False)
+    is_time_tracking_enabled = models.BooleanField(default=True)
+    is_issue_type_enabled = models.BooleanField(default=True)
+    is_project_updates_enabled = models.BooleanField(default=True)
+    is_epic_enabled = models.BooleanField(default=True)
     guest_view_all_features = models.BooleanField(default=False)
     cover_image = models.TextField(blank=True, null=True)
     cover_image_asset = models.ForeignKey(
@@ -115,6 +155,23 @@ class Project(BaseModel):
     # external_id for imports
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
+    # Project state and priority
+    project_state = models.CharField(
+        max_length=20,
+        choices=ProjectState.choices(),
+        default="draft",
+        verbose_name="Project State",
+    )
+    priority = models.CharField(
+        max_length=20,
+        choices=ProjectPriority.choices(),
+        default="none",
+        null=True,
+        blank=True,
+        verbose_name="Project Priority",
+    )
+    start_date = models.DateField(null=True, blank=True, verbose_name="Project Start Date")
+    target_date = models.DateField(null=True, blank=True, verbose_name="Project Due Date")
 
     def __init__(self, *args, **kwargs):
         # Track if timezone is provided, if so, don't override it with the workspace timezone when saving
