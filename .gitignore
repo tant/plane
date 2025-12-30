@@ -112,3 +112,4 @@ build/
 temp/
 scripts/
 .mcp.json
+buildkitd.toml
