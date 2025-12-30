@@ -64,17 +64,38 @@ Mở browser và vào Coolify server của bạn (ví dụ: `https://coolify.you
 
 Coolify sẽ parse compose file và hiển thị danh sách services.
 
-### Bước 7: Cấu hình Domain cho Proxy service
+### Bước 7: Cấu hình Domain
 
-1. Tìm service **proxy** trong danh sách
-2. Click vào **proxy**
-3. Trong phần **Domains**, thêm domain của bạn:
+Coolify sẽ hiện danh sách domains cho tất cả services. **Chỉ cần cấu hình domain cho `proxy`**, bỏ qua các services khác.
+
+```
+Domains for proxy      ← CHỈ CẦN CẤU HÌNH CÁI NÀY
+Domains for web        ← Bỏ qua
+Domains for admin      ← Bỏ qua
+Domains for space      ← Bỏ qua
+Domains for live       ← Bỏ qua
+Domains for api        ← Bỏ qua
+... (bỏ qua tất cả)
+```
+
+**Cách làm:**
+
+1. Tìm **"Domains for proxy"**
+2. Xóa domain tự động generate (nếu có)
+3. Nhập domain của bạn với port `:80`:
    ```
    dev.plane.yourdomain.com:80
    ```
-   > **Lưu ý**: Thêm `:80` vì proxy listen trên port 80
-
 4. Click **Save**
+
+> **Tại sao chỉ cần proxy?**
+>
+> `proxy` là Caddy reverse proxy, nó sẽ tự động route:
+> - `/` → web (main app)
+> - `/god-mode/` → admin
+> - `/spaces/` → space
+> - `/api/` → api
+> - `/live/` → live collaboration
 
 ### Bước 8: Cấu hình Environment Variables
 
