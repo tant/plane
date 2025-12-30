@@ -1,18 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { ExternalLink } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Logo } from "@plane/propel/emoji-icon-picker";
+import { CycleIcon } from "@plane/propel/icons";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { ICycle } from "@plane/types";
-import { ContentWrapper, Loader, Row } from "@plane/ui";
+import { ContentWrapper, Loader, Tooltip, Row } from "@plane/ui";
 import { cn, getDate, findHowManyDaysLeft } from "@plane/utils";
-// components
-import { ActiveCycleProgress } from "@/components/cycles/active-cycle/progress";
-import { ActiveCycleProductivity } from "@/components/cycles/active-cycle/productivity";
-import { CyclesListItem } from "@/components/cycles/list/cycles-list-item";
+// local components
+import { ActiveCycleBurndown } from "./burndown";
+import { ActiveCycleBreakdown } from "./breakdown";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
@@ -22,12 +25,12 @@ import { CycleService } from "@/services/cycle.service";
 
 const cycleService = new CycleService();
 
-type TWorkspaceActiveCycleItem = {
+type TWorkspaceActiveCycleItemProps = {
   workspaceSlug: string;
   cycle: ICycle;
 };
 
-const WorkspaceActiveCycleItem = observer(function WorkspaceActiveCycleItem(props: TWorkspaceActiveCycleItem) {
+const WorkspaceActiveCycleItem = observer(function WorkspaceActiveCycleItem(props: TWorkspaceActiveCycleItemProps) {
   const { workspaceSlug, cycle } = props;
   // hooks
   const { getProjectById } = useProject();
@@ -46,44 +49,60 @@ const WorkspaceActiveCycleItem = observer(function WorkspaceActiveCycleItem(prop
     }
   }, [workspaceSlug, cycle.project_id, cycle.id, fetchActiveCycleProgress, fetchActiveCycleAnalytics]);
 
-  const handleFiltersUpdate = useCallback(() => {
-    // Navigate to cycle with filters - can be enhanced later
-  }, []);
-
   if (!project) return null;
 
   return (
-    <div className="flex flex-col border-b border-subtle">
-      <div className="flex items-center gap-3 py-4 px-4">
-        <span className="text-2xl">{project.emoji || "📁"}</span>
-        <div className="flex flex-col flex-1">
-          <span className="text-sm text-tertiary">{project.name}</span>
-        </div>
-        <span
-          className={cn(
-            "text-sm font-medium px-2 py-1 rounded",
-            daysLeft <= 3 ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"
-          )}
-        >
-          {daysLeft} {daysLeft === 1 ? "day" : "days"} left
-        </span>
+    <div className="flex flex-col">
+      {/* Project header */}
+      <div className="flex items-center gap-2 px-4 py-3">
+        <Logo logo={project.logo_props} size={20} />
+        <h2 className="text-base font-medium text-secondary">{project.name}</h2>
       </div>
-      <CyclesListItem
-        key={cycle.id}
-        cycleId={cycle.id}
-        workspaceSlug={workspaceSlug}
-        projectId={cycle.project_id}
-        className="!border-b-transparent"
-      />
-      <Row className="bg-surface-1 pt-3 pb-6">
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-          <ActiveCycleProgress
-            handleFiltersUpdate={handleFiltersUpdate}
-            projectId={cycle.project_id}
-            workspaceSlug={workspaceSlug}
-            cycle={cycleData}
-          />
-          <ActiveCycleProductivity workspaceSlug={workspaceSlug} projectId={cycle.project_id} cycle={cycleData} />
+
+      {/* Cycle info row */}
+      <div className="flex items-center justify-between px-4 py-3 border-t border-subtle">
+        <div className="flex items-center gap-3">
+          <CycleIcon className="h-4 w-4 text-tertiary" />
+          <h3 className="text-sm font-medium text-secondary">{cycleData.name}</h3>
+          {daysLeft !== undefined && (
+            <span
+              className={cn(
+                "text-xs font-medium px-2 py-0.5 rounded",
+                daysLeft <= 3 ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"
+              )}
+            >
+              {daysLeft} {daysLeft === 1 ? "day" : "days"} left
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          <Tooltip tooltipContent="Assignee">
+            <div className="h-5 w-5 rounded-full bg-surface-2 flex items-center justify-center text-xs text-tertiary">
+              ?
+            </div>
+          </Tooltip>
+          <Link
+            href={`/${workspaceSlug}/projects/${cycle.project_id}/cycles/${cycle.id}/`}
+            className="flex items-center gap-1 text-sm text-primary-button hover:underline"
+          >
+            View cycle
+            <ExternalLink className="h-3 w-3" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Analytics section - 2 columns */}
+      <Row className="bg-surface-1 border-t border-subtle">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-4">
+          {/* Left column - Burndown chart */}
+          <div className="min-h-[280px]">
+            <ActiveCycleBurndown workspaceSlug={workspaceSlug} projectId={cycle.project_id} cycle={cycleData} />
+          </div>
+
+          {/* Right column - Breakdown */}
+          <div className="min-h-[280px]">
+            <ActiveCycleBreakdown cycle={cycleData} />
+          </div>
         </div>
       </Row>
     </div>
@@ -111,9 +130,8 @@ export const WorkspaceActiveCyclesRoot = observer(function WorkspaceActiveCycles
     return (
       <ContentWrapper>
         <Loader className="space-y-4">
-          <Loader.Item height="200px" />
-          <Loader.Item height="200px" />
-          <Loader.Item height="200px" />
+          <Loader.Item height="300px" />
+          <Loader.Item height="300px" />
         </Loader>
       </ContentWrapper>
     );
@@ -143,20 +161,20 @@ export const WorkspaceActiveCyclesRoot = observer(function WorkspaceActiveCycles
 
   return (
     <ContentWrapper>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col divide-y divide-subtle border border-subtle rounded-lg overflow-hidden">
         {activeCycles.map((cycle) => (
           <WorkspaceActiveCycleItem key={cycle.id} workspaceSlug={workspaceSlug!} cycle={cycle} />
         ))}
-
-        {data?.next_page_results && (
-          <button
-            className="text-sm text-primary-button hover:underline py-4"
-            onClick={() => setCursor(data.next_cursor)}
-          >
-            {t("load_more")}
-          </button>
-        )}
       </div>
+
+      {data?.next_page_results && (
+        <button
+          className="w-full text-sm text-primary-button hover:underline py-4 mt-4"
+          onClick={() => setCursor(data.next_cursor)}
+        >
+          {t("load_more")}
+        </button>
+      )}
     </ContentWrapper>
   );
 });

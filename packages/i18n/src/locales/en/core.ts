@@ -17,6 +17,7 @@ export default {
     favorites: "Favorites",
     pro: "Pro",
     upgrade: "Upgrade",
+    epics: "Epics",
   },
 
   auth: {
