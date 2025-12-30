@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@plane/constants";
 import type {
   GithubRepositoriesResponse,
   ISearchIssueResponse,
+  IUserActivityResponse,
   TProjectAnalyticsCount,
   TProjectAnalyticsCountParams,
   TProjectIssuesSearchParams,
@@ -176,6 +177,20 @@ export class ProjectService extends APIService {
     params: TProjectIssuesSearchParams
   ): Promise<ISearchIssueResponse[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/search-issues/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getProjectActivity(
+    workspaceSlug: string,
+    projectId: string,
+    params: { per_page?: number; cursor?: string }
+  ): Promise<IUserActivityResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/activities/`, {
       params,
     })
       .then((response) => response?.data)
