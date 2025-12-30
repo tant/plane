@@ -1,5 +1,6 @@
 import { useRef, useState, useMemo } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 // plane imports
@@ -39,6 +40,8 @@ const IssueTypeIcon = ({ logoProps }: { logoProps: { in_use?: string; icon?: { n
 export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIssueTypeSwitcherProps) {
   const { issueId, disabled } = props;
   const { t } = useTranslation();
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
   const {
     issue: { getIssueById, updateIssue },
@@ -93,8 +96,8 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
   }, [workspaceIssueTypes, query]);
 
   const handleChange = (val: string) => {
-    if (!issue?.project_id) return;
-    void updateIssue(issue.workspace_slug || "", issue.project_id, issueId, { type_id: val });
+    if (!issue?.project_id || !workspaceSlug) return;
+    void updateIssue(workspaceSlug.toString(), issue.project_id, issueId, { type_id: val });
     handleClose();
   };
 
