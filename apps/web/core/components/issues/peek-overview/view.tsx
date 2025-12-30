@@ -65,8 +65,11 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     setPeekIssue,
     isAnyModalOpen,
     issue: { getIssueById },
-  } = useIssueDetail();
-  const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(EIssueServiceType.EPICS);
+  } = useIssueDetail(issueServiceType);
+  // Check epic modals separately if we're viewing an issue (not epic)
+  const { isAnyModalOpen: isAnyEpicModalOpen } = useIssueDetail(
+    issueServiceType === EIssueServiceType.EPICS ? EIssueServiceType.ISSUES : EIssueServiceType.EPICS
+  );
   const issue = getIssueById(issueId);
   // remove peek id
   const removeRoutePeekId = () => {

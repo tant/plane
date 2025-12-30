@@ -36,14 +36,16 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   const {
     issues: { restoreIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
+  const issueStoreType = useIssueStoreType();
+  const storeType = issueStoreFromProps ?? issueStoreType;
+  // Determine the issue service type based on store type
+  const issueServiceType = storeType === EIssuesStoreType.EPIC ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES;
   const {
     peekIssue,
     setPeekIssue,
     issue: { fetchIssue },
     fetchActivities,
-  } = useIssueDetail();
-  const issueStoreType = useIssueStoreType();
-  const storeType = issueStoreFromProps ?? issueStoreType;
+  } = useIssueDetail(issueServiceType);
   const { issues } = useIssues(storeType);
 
   useWorkItemProperties(
@@ -303,9 +305,6 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
     peekIssue?.workspaceSlug,
     peekIssue?.projectId
   );
-
-  // Determine the issue service type based on store type
-  const issueServiceType = storeType === EIssuesStoreType.EPIC ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES;
 
   return (
     <IssueView
