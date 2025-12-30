@@ -25,7 +25,6 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
-from plane.utils.ip_address import get_client_ip
 from .. import BaseViewSet
 
 

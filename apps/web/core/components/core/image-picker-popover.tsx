@@ -5,10 +5,11 @@ import { useDropzone } from "react-dropzone";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 import useSWR from "swr";
-import { Tab, Popover } from "@headlessui/react";
+import { Popover } from "@headlessui/react";
 // plane imports
 import { ACCEPTED_COVER_IMAGE_MIME_TYPES_FOR_REACT_DROPZONE, MAX_FILE_SIZE } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
+import { Tabs } from "@plane/propel/tabs";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
@@ -27,10 +28,14 @@ type TTabOption = {
   isEnabled: boolean;
 };
 
+type TFormValues = {
+  search: string;
+};
+
 type Props = {
   label: string | React.ReactNode;
   value: string | null;
-  control: Control<any>;
+  control: Control<TFormValues>;
   onChange: (data: string) => void;
   disabled?: boolean;
   tabIndex?: number;
@@ -80,9 +85,12 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
     [hasUnsplashConfigured]
   );
 
-  const { data: unsplashImages, error: unsplashError } = useSWR(
+  const enabledTabs = useMemo(() => tabOptions.filter((tab) => tab.isEnabled), [tabOptions]);
+
+  type TUnsplashImage = { id: string; urls: { small: string; regular: string }; alt_description: string };
+  const { data: unsplashImages, error: unsplashError } = useSWR<TUnsplashImage[], Error>(
     `UNSPLASH_IMAGES_${searchParams}`,
-    () => fileService.getUnsplashImages(searchParams),
+    () => fileService.getUnsplashImages(searchParams) as Promise<TUnsplashImage[]>,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
@@ -127,7 +135,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           image
         )
         .then((res) => uploadCallback(res.asset_url))
-        .catch((error) => {
+        .catch((error: { error?: string }) => {
           console.error("Error uploading user cover image:", error);
           setIsImageUploading(false);
           setToast({
@@ -148,7 +156,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
           image
         )
         .then((res) => uploadCallback(res.asset_url))
-        .catch((error) => {
+        .catch((error: { error?: string }) => {
           console.error("Error uploading project cover image:", error);
           setIsImageUploading(false);
           setToast({
@@ -191,25 +199,19 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
         >
           <div
             ref={imagePickerRef}
-            className="flex h-96 w-80 flex-col overflow-auto rounded-sm border border-strong bg-surface-1 p-3 shadow-2xl md:h-[28rem] md:w-[36rem]"
+            className="flex h-96 w-80 flex-col overflow-auto rounded border border-subtle bg-surface-1 shadow-raised-200 md:h-[36rem] md:w-[36rem]"
           >
-            <Tab.Group>
-              <Tab.List as="span" className="inline-block rounded-sm bg-layer-1 p-1">
-                {tabOptions.map((tab) => (
-                  <Tab
-                    key={tab.key}
-                    className={({ selected }) =>
-                      `rounded-sm px-4 py-1 text-center text-13 outline-none transition-colors ${
-                        selected ? "bg-accent-primary text-on-color" : "text-primary"
-                      }`
-                    }
-                  >
+            <Tabs defaultValue={enabledTabs[0]?.key || "images"} className="flex h-full flex-col p-3">
+              <Tabs.List className="flex rounded bg-layer-3 p-1">
+                {enabledTabs.map((tab) => (
+                  <Tabs.Trigger key={tab.key} value={tab.key} size="md">
                     {tab.title}
-                  </Tab>
+                  </Tabs.Trigger>
                 ))}
-              </Tab.List>
-              <Tab.Panels className="vertical-scrollbar scrollbar-md h-full w-full flex-1 overflow-y-auto overflow-x-hidden">
-                <Tab.Panel className="mt-4 h-full w-full space-y-4">
+                <Tabs.Indicator />
+              </Tabs.List>
+              <div className="vertical-scrollbar scrollbar-sm p-3 mt-3 flex-1 overflow-y-auto overflow-x-hidden">
+                <Tabs.Content value="unsplash" className="h-full w-full space-y-4">
                   {(unsplashImages || !unsplashError) && (
                     <>
                       <div className="flex items-center gap-x-2">
@@ -242,21 +244,22 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       {unsplashImages ? (
                         unsplashImages.length > 0 ? (
                           <div className="grid grid-cols-4 gap-4">
-                            {unsplashImages.map((image) => (
-                              <div
-                                key={image.id}
+                            {unsplashImages.map((img) => (
+                              <button
+                                type="button"
+                                key={img.id}
                                 className="relative col-span-2 aspect-video md:col-span-1"
                                 onClick={() => {
                                   setIsOpen(false);
-                                  onChange(image.urls.regular);
+                                  onChange(img.urls.regular);
                                 }}
                               >
                                 <img
-                                  src={image.urls.small}
-                                  alt={image.alt_description}
+                                  src={img.urls.small}
+                                  alt={img.alt_description}
                                   className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover"
                                 />
-                              </div>
+                              </button>
                             ))}
                           </div>
                         ) : (
@@ -276,25 +279,26 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       )}
                     </>
                   )}
-                </Tab.Panel>
-                <Tab.Panel className="mt-4 h-full w-full space-y-4">
+                </Tabs.Content>
+                <Tabs.Content value="images" className="h-full w-full space-y-4">
                   <div className="grid grid-cols-4 gap-4">
                     {Object.values(STATIC_COVER_IMAGES).map((imageUrl, index) => (
-                      <div
+                      <button
+                        type="button"
                         key={imageUrl}
                         className="relative col-span-2 aspect-video md:col-span-1"
                         onClick={() => handleStaticImageSelect(imageUrl)}
                       >
                         <img
                           src={imageUrl}
-                          alt={`Cover image ${index + 1}`}
+                          alt={`Cover ${index + 1}`}
                           className="absolute left-0 top-0 h-full w-full cursor-pointer rounded-sm object-cover hover:opacity-80 transition-opacity"
                         />
-                      </div>
+                      </button>
                     ))}
                   </div>
-                </Tab.Panel>
-                <Tab.Panel className="mt-4 h-full w-full">
+                </Tabs.Content>
+                <Tabs.Content value="upload" className="h-full w-full">
                   <div className="flex h-full w-full flex-col gap-y-2">
                     <div className="flex w-full flex-1 items-center gap-3">
                       <div
@@ -315,7 +319,7 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                           <>
                             <img
                               src={image ? URL.createObjectURL(image) : getCoverImageDisplayURL(value, "")}
-                              alt="image"
+                              alt="Cover preview"
                               className="rounded-lg h-full w-full object-cover"
                             />
                           </>
@@ -353,17 +357,17 @@ export const ImagePickerPopover = observer(function ImagePickerPopover(props: Pr
                       <Button
                         variant="primary"
                         className="w-full"
-                        onClick={handleSubmit}
+                        onClick={() => void handleSubmit()}
                         disabled={!image}
                         loading={isImageUploading}
                       >
-                        {isImageUploading ? "Uploading..." : "Upload & Save"}
+                        {isImageUploading ? "Uploading" : "Upload & Save"}
                       </Button>
                     </div>
                   </div>
-                </Tab.Panel>
-              </Tab.Panels>
-            </Tab.Group>
+                </Tabs.Content>
+              </div>
+            </Tabs>
           </div>
         </Popover.Panel>
       )}
