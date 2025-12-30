@@ -96,7 +96,7 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
   const {
     id: pageId,
     isContentEditable,
-    editor: { editorRef, updateAssetsList },
+    editor: { editorRef, updateAssetsList, updateCollaborators },
     setSyncingStatus,
   } = page;
   const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id ?? "";
@@ -178,8 +178,11 @@ export const PageEditorBody = observer(function PageEditorBody(props: Props) {
           setSyncingStatus("syncing");
         }
       },
+      onCollaboratorsChange: (collaborators) => {
+        updateCollaborators(collaborators);
+      },
     }),
-    [setSyncingStatus, onCollaborationStateChange]
+    [setSyncingStatus, onCollaborationStateChange, updateCollaborators]
   );
 
   const realtimeConfig: TRealtimeConfig | undefined = useMemo(() => {

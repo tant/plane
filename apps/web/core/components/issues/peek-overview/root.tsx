@@ -304,6 +304,9 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
     peekIssue?.projectId
   );
 
+  // Determine the issue service type based on store type
+  const issueServiceType = storeType === EIssuesStoreType.EPIC ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES;
+
   return (
     <IssueView
       workspaceSlug={peekIssue.workspaceSlug}
@@ -316,6 +319,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       embedIssue={embedIssue}
       embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}
+      issueServiceType={issueServiceType}
     />
   );
 });
