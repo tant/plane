@@ -57,3 +57,8 @@ from .user import UserEndpoint
 from .invite import WorkspaceInvitationsViewset
 
 from .sticky import StickyViewSet
+
+from .project_update import (
+    ProjectUpdateListCreateAPIEndpoint,
+    ProjectUpdateDetailAPIEndpoint,
+)

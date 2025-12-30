@@ -55,6 +55,7 @@ from .project import (
     ProjectNetwork,
     ProjectPublicMember,
 )
+from .project_update import ProjectUpdate, ProjectUpdateCategory
 from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State, StateGroup, DEFAULT_STATES
