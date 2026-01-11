@@ -34,10 +34,7 @@ function EpicsSettingsPage() {
     <SettingsContentWrapper>
       <PageHead title={pageTitle} />
       <div className="w-full">
-        <SettingsHeading
-          title={t("common.epics")}
-          description={t("project_settings.epics.description")}
-        />
+        <SettingsHeading title={t("common.epics")} description={t("project_settings.epics.description")} />
         <ProjectEpicsRoot workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={canPerformProjectAdminActions} />
       </div>
     </SettingsContentWrapper>

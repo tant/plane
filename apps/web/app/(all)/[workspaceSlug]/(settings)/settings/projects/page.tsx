@@ -29,11 +29,7 @@ function ProjectSettingsPage() {
         <Link href="https://plane.so/" target="_blank" className={cn(getButtonStyling("secondary", "base"))}>
           Learn more about projects
         </Link>
-        <Button
-          onClick={() => toggleCreateProjectModal(true)}
-        >
-          Start your first project
-        </Button>
+        <Button onClick={() => toggleCreateProjectModal(true)}>Start your first project</Button>
       </div>
     </div>
   );

@@ -43,11 +43,7 @@ export function DeleteProjectSection(props: IDeleteProjectSection) {
                 <div>
                   {projectDetails ? (
                     <div>
-                      <Button
-                        variant="error-fill"
-                        size="lg"
-                        onClick={handleDelete}
-                      >
+                      <Button variant="error-fill" size="lg" onClick={handleDelete}>
                         Delete project
                       </Button>
                     </div>

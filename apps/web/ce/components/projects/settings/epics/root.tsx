@@ -35,9 +35,7 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("toast.success"),
-        message: isEpicEnabled
-          ? t("project_settings.epics.disabled")
-          : t("project_settings.epics.enabled"),
+        message: isEpicEnabled ? t("project_settings.epics.disabled") : t("project_settings.epics.enabled"),
       });
     } catch (error) {
       console.error("Error toggling epics:", error);
@@ -74,12 +72,7 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
             <p className="text-xs text-tertiary">{t("project_settings.epics.turn_on_description")}</p>
           </div>
         </div>
-        <ToggleSwitch
-          value={isEpicEnabled}
-          onChange={handleToggle}
-          disabled={!isAdmin || isUpdating}
-          size="sm"
-        />
+        <ToggleSwitch value={isEpicEnabled} onChange={handleToggle} disabled={!isAdmin || isUpdating} size="sm" />
       </div>
 
       {/* Properties section - only show when enabled */}
@@ -103,12 +96,7 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
                 <p className="text-sm font-medium">{t("project_settings.epics.add_custom_properties")}</p>
                 <p className="text-xs text-tertiary">{t("project_settings.epics.custom_properties_empty")}</p>
               </div>
-              <Button
-                variant="primary"
-                size="sm"
-                prependIcon={<Plus className="h-4 w-4" />}
-                disabled={!isAdmin}
-              >
+              <Button variant="primary" size="sm" prependIcon={<Plus className="h-4 w-4" />} disabled={!isAdmin}>
                 {t("project_settings.epics.add_new_property")}
               </Button>
             </div>

@@ -38,7 +38,11 @@ function WorkflowsSettingsPage() {
           title={t("project_settings.workflows.heading")}
           description={t("project_settings.workflows.description")}
         />
-        <ProjectWorkflowsRoot workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={canPerformProjectAdminActions} />
+        <ProjectWorkflowsRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          isAdmin={canPerformProjectAdminActions}
+        />
       </div>
     </SettingsContentWrapper>
   );

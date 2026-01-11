@@ -6,7 +6,22 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { Controller, useForm } from "react-hook-form";
-import { ChevronDown, ChevronRight, Link2, Paperclip, Users, Signal, CircleDot, ExternalLink, Trash2, CalendarDays, RefreshCw, FileText, Plus, Edit3 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Link2,
+  Paperclip,
+  Users,
+  Signal,
+  CircleDot,
+  ExternalLink,
+  Trash2,
+  CalendarDays,
+  RefreshCw,
+  FileText,
+  Plus,
+  Edit3,
+} from "lucide-react";
 // plane imports
 import { STATE_GROUPS, MAX_FILE_SIZE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -14,7 +29,18 @@ import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-ico
 import { OverviewIcon, StateGroupIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EFileAssetType, EIssuesStoreType } from "@plane/types";
-import type { IProject, TStateGroups, TProjectLink, TProjectLinkEditableFields, ICycle, IUserLite, TProjectState, TProjectPriority, IProjectUpdate, TProjectUpdateCategory } from "@plane/types";
+import type {
+  IProject,
+  TStateGroups,
+  TProjectLink,
+  TProjectLinkEditableFields,
+  ICycle,
+  IUserLite,
+  TProjectState,
+  TProjectPriority,
+  IProjectUpdate,
+  TProjectUpdateCategory,
+} from "@plane/types";
 import { Loader, Tooltip } from "@plane/ui";
 import { cn, getFileURL, calculateTimeAgo, convertBytesToSize } from "@plane/utils";
 // components
@@ -112,13 +138,8 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
     linkData,
     setLinkData,
   } = useProjectLink();
-  const {
-    fetchAttachments,
-    uploadAttachment,
-    deleteAttachment,
-    getAttachmentsByProjectId,
-    getAttachmentById,
-  } = useProjectAttachment();
+  const { fetchAttachments, uploadAttachment, deleteAttachment, getAttachmentsByProjectId, getAttachmentById } =
+    useProjectAttachment();
   const { data: currentUser } = useUser();
   const { fetchActiveCycle, getProjectCycleIds, getCycleById, loader: cycleLoader } = useCycle();
   // i18n
@@ -266,16 +287,12 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
 
       setIsUpdating(true);
       try {
-        const coverImagePayload = await handleCoverImageChange(
-          currentProjectDetails.cover_image_url,
-          newCoverImage,
-          {
-            workspaceSlug,
-            entityIdentifier: projectId,
-            entityType: EFileAssetType.PROJECT_COVER,
-            isUserAsset: false,
-          }
-        );
+        const coverImagePayload = await handleCoverImageChange(currentProjectDetails.cover_image_url, newCoverImage, {
+          workspaceSlug,
+          entityIdentifier: projectId,
+          entityType: EFileAssetType.PROJECT_COVER,
+          isUserAsset: false,
+        });
 
         if (coverImagePayload) {
           await updateProject(workspaceSlug, projectId, coverImagePayload as Partial<IProject>);
@@ -632,60 +649,66 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
     }
   }, [workspaceSlug, projectId, newUpdateTitle, newUpdateDescription, newUpdateCategory, mutateUpdates, t]);
 
-  const handleEditUpdate = useCallback(async (updateId: string) => {
-    if (!editingUpdateTitle.trim()) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("toast.error"),
-        message: t("project_overview.update_title_required"),
-      });
-      return;
-    }
+  const handleEditUpdate = useCallback(
+    async (updateId: string) => {
+      if (!editingUpdateTitle.trim()) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("project_overview.update_title_required"),
+        });
+        return;
+      }
 
-    try {
-      await projectUpdateService.updateUpdate(workspaceSlug, projectId, updateId, {
-        title: editingUpdateTitle.trim(),
-        description: editingUpdateDescription.trim(),
-        category: editingUpdateCategory,
-      });
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: t("project_overview.update_updated"),
-      });
-      setEditingUpdateId(null);
-      setEditingUpdateTitle("");
-      setEditingUpdateDescription("");
-      setEditingUpdateCategory("general");
-      void mutateUpdates();
-    } catch (error) {
-      console.error("Error updating update:", error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("toast.error"),
-        message: t("something_went_wrong"),
-      });
-    }
-  }, [workspaceSlug, projectId, editingUpdateTitle, editingUpdateDescription, editingUpdateCategory, mutateUpdates, t]);
+      try {
+        await projectUpdateService.updateUpdate(workspaceSlug, projectId, updateId, {
+          title: editingUpdateTitle.trim(),
+          description: editingUpdateDescription.trim(),
+          category: editingUpdateCategory,
+        });
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("toast.success"),
+          message: t("project_overview.update_updated"),
+        });
+        setEditingUpdateId(null);
+        setEditingUpdateTitle("");
+        setEditingUpdateDescription("");
+        setEditingUpdateCategory("general");
+        void mutateUpdates();
+      } catch (error) {
+        console.error("Error updating update:", error);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("something_went_wrong"),
+        });
+      }
+    },
+    [workspaceSlug, projectId, editingUpdateTitle, editingUpdateDescription, editingUpdateCategory, mutateUpdates, t]
+  );
 
-  const handleDeleteUpdate = useCallback(async (updateId: string) => {
-    try {
-      await projectUpdateService.deleteUpdate(workspaceSlug, projectId, updateId);
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: t("toast.success"),
-        message: t("project_overview.update_deleted"),
-      });
-      void mutateUpdates();
-    } catch (error) {
-      console.error("Error deleting update:", error);
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: t("toast.error"),
-        message: t("something_went_wrong"),
-      });
-    }
-  }, [workspaceSlug, projectId, mutateUpdates, t]);
+  const handleDeleteUpdate = useCallback(
+    async (updateId: string) => {
+      try {
+        await projectUpdateService.deleteUpdate(workspaceSlug, projectId, updateId);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("toast.success"),
+          message: t("project_overview.update_deleted"),
+        });
+        void mutateUpdates();
+      } catch (error) {
+        console.error("Error deleting update:", error);
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("toast.error"),
+          message: t("something_went_wrong"),
+        });
+      }
+    },
+    [workspaceSlug, projectId, mutateUpdates, t]
+  );
 
   const startEditingUpdate = useCallback((update: IProjectUpdate) => {
     setEditingUpdateId(update.id);
@@ -892,12 +915,12 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                 <StateGroupIcon stateGroup="started" className="h-4 w-4" />
                 <span className="text-sm font-medium">{t("project_overview.milestones")}</span>
                 {activeCycles.length > 0 && (
-                  <span className="text-xs bg-layer-3 px-1.5 py-0.5 rounded text-secondary">
-                    {activeCycles.length}
-                  </span>
+                  <span className="text-xs bg-layer-3 px-1.5 py-0.5 rounded text-secondary">{activeCycles.length}</span>
                 )}
               </div>
-              <ChevronDown className={cn("h-4 w-4 text-tertiary transition-transform", isMilestonesExpanded && "rotate-180")} />
+              <ChevronDown
+                className={cn("h-4 w-4 text-tertiary transition-transform", isMilestonesExpanded && "rotate-180")}
+              />
             </button>
             {isMilestonesExpanded && (
               <div className="px-4 pb-4">
@@ -909,9 +932,8 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                   <div className="space-y-2">
                     {activeCycles.map((cycle) => {
                       if (!cycle) return null;
-                      const progress = cycle.total_issues > 0
-                        ? Math.round((cycle.completed_issues / cycle.total_issues) * 100)
-                        : 0;
+                      const progress =
+                        cycle.total_issues > 0 ? Math.round((cycle.completed_issues / cycle.total_issues) * 100) : 0;
                       return (
                         <Link
                           key={cycle.id}
@@ -929,10 +951,10 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                             />
                           </div>
                           <div className="flex items-center justify-between mt-2 text-xs text-tertiary">
-                            <span>{cycle.completed_issues}/{cycle.total_issues} {t("issues")}</span>
-                            {cycle.end_date && (
-                              <span>{new Date(cycle.end_date).toLocaleDateString()}</span>
-                            )}
+                            <span>
+                              {cycle.completed_issues}/{cycle.total_issues} {t("issues")}
+                            </span>
+                            {cycle.end_date && <span>{new Date(cycle.end_date).toLocaleDateString()}</span>}
                           </div>
                         </Link>
                       );
@@ -966,7 +988,12 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                   activeTab === "properties" ? "border-b-2 border-accent-primary" : ""
                 )}
               >
-                <CircleDot className={cn("h-4 w-4 mx-auto", activeTab === "properties" ? "text-accent-primary" : "text-tertiary")} />
+                <CircleDot
+                  className={cn(
+                    "h-4 w-4 mx-auto",
+                    activeTab === "properties" ? "text-accent-primary" : "text-tertiary"
+                  )}
+                />
               </button>
               {isProjectUpdatesEnabled && (
                 <button
@@ -976,7 +1003,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                     activeTab === "updates" ? "border-b-2 border-accent-primary" : ""
                   )}
                 >
-                  <FileText className={cn("h-4 w-4 mx-auto", activeTab === "updates" ? "text-accent-primary" : "text-tertiary")} />
+                  <FileText
+                    className={cn("h-4 w-4 mx-auto", activeTab === "updates" ? "text-accent-primary" : "text-tertiary")}
+                  />
                 </button>
               )}
               <button
@@ -986,7 +1015,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                   activeTab === "links" ? "border-b-2 border-accent-primary" : ""
                 )}
               >
-                <Link2 className={cn("h-4 w-4 mx-auto", activeTab === "links" ? "text-accent-primary" : "text-tertiary")} />
+                <Link2
+                  className={cn("h-4 w-4 mx-auto", activeTab === "links" ? "text-accent-primary" : "text-tertiary")}
+                />
               </button>
               <button
                 onClick={() => setActiveTab("activity")}
@@ -995,7 +1026,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                   activeTab === "activity" ? "border-b-2 border-accent-primary" : ""
                 )}
               >
-                <Signal className={cn("h-4 w-4 mx-auto", activeTab === "activity" ? "text-accent-primary" : "text-tertiary")} />
+                <Signal
+                  className={cn("h-4 w-4 mx-auto", activeTab === "activity" ? "text-accent-primary" : "text-tertiary")}
+                />
               </button>
             </div>
 
@@ -1085,7 +1118,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                       buttonVariant="transparent-with-text"
                       buttonClassName="!px-2 !py-1 text-sm"
                       buttonContainerClassName="w-auto"
-                      maxDate={currentProjectDetails.target_date ? new Date(currentProjectDetails.target_date) : undefined}
+                      maxDate={
+                        currentProjectDetails.target_date ? new Date(currentProjectDetails.target_date) : undefined
+                      }
                     />
                   </div>
 
@@ -1102,7 +1137,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                       buttonVariant="transparent-with-text"
                       buttonClassName="!px-2 !py-1 text-sm"
                       buttonContainerClassName="w-auto"
-                      minDate={currentProjectDetails.start_date ? new Date(currentProjectDetails.start_date) : undefined}
+                      minDate={
+                        currentProjectDetails.start_date ? new Date(currentProjectDetails.start_date) : undefined
+                      }
                     />
                   </div>
                 </div>
@@ -1161,7 +1198,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                         className="text-xs bg-transparent border border-subtle rounded px-2 py-1"
                       >
                         {PROJECT_UPDATE_CATEGORIES.map((cat) => (
-                          <option key={cat.key} value={cat.key}>{cat.title}</option>
+                          <option key={cat.key} value={cat.key}>
+                            {cat.title}
+                          </option>
                         ))}
                       </select>
                       <div className="flex items-center gap-2">
@@ -1220,7 +1259,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                                 className="text-xs bg-transparent border border-subtle rounded px-2 py-1"
                               >
                                 {PROJECT_UPDATE_CATEGORIES.map((cat) => (
-                                  <option key={cat.key} value={cat.key}>{cat.title}</option>
+                                  <option key={cat.key} value={cat.key}>
+                                    {cat.title}
+                                  </option>
                                 ))}
                               </select>
                               <div className="flex items-center gap-2">
@@ -1245,7 +1286,10 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                       }
 
                       return (
-                        <div key={update.id} className="p-3 rounded-lg border border-subtle hover:bg-layer-2 transition-colors group">
+                        <div
+                          key={update.id}
+                          className="p-3 rounded-lg border border-subtle hover:bg-layer-2 transition-colors group"
+                        >
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
@@ -1260,9 +1304,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                                 <p className="text-xs text-secondary mt-1 line-clamp-2">{update.description}</p>
                               )}
                               <div className="flex items-center gap-2 mt-2 text-[10px] text-tertiary">
-                                {update.created_by_detail && (
-                                  <span>{update.created_by_detail.display_name}</span>
-                                )}
+                                {update.created_by_detail && <span>{update.created_by_detail.display_name}</span>}
                                 <span>•</span>
                                 <span>{calculateTimeAgo(update.created_at)}</span>
                               </div>
@@ -1311,11 +1353,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
                   <h5 className="text-xs font-medium text-secondary">{t("links.sidebar_title")}</h5>
-                  <button
-                    type="button"
-                    onClick={handleAddLink}
-                    className="text-xs text-accent-primary hover:underline"
-                  >
+                  <button type="button" onClick={handleAddLink} className="text-xs text-accent-primary hover:underline">
                     {t("project_overview.add_link")}
                   </button>
                 </div>
@@ -1336,9 +1374,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                             className="flex items-center gap-2 flex-1 min-w-0"
                           >
                             <Link2 className="h-3.5 w-3.5 shrink-0 text-tertiary" />
-                            <span className="text-sm text-secondary truncate">
-                              {link.title || link.url}
-                            </span>
+                            <span className="text-sm text-secondary truncate">{link.title || link.url}</span>
                             <ExternalLink className="h-3 w-3 shrink-0 text-tertiary opacity-0 group-hover:opacity-100" />
                           </a>
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
@@ -1380,7 +1416,9 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                         const attachment = getAttachmentById(attachmentId);
                         if (!attachment) return null;
                         const fileName = attachment.attributes?.name || "Attachment";
-                        const fileSize = attachment.attributes?.size ? convertBytesToSize(attachment.attributes.size) : "";
+                        const fileSize = attachment.attributes?.size
+                          ? convertBytesToSize(attachment.attributes.size)
+                          : "";
                         return (
                           <div
                             key={attachmentId}
@@ -1421,9 +1459,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
             {activeTab === "activity" && (
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h5 className="text-xs font-medium text-secondary">
-                    {t("project_overview.activity")}
-                  </h5>
+                  <h5 className="text-xs font-medium text-secondary">{t("project_overview.activity")}</h5>
                   <Tooltip tooltipContent={t("refresh")}>
                     <button
                       type="button"
@@ -1468,9 +1504,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                                 </span>
                               )}
                             </p>
-                            <p className="text-[10px] text-tertiary mt-0.5">
-                              {calculateTimeAgo(activity.created_at)}
-                            </p>
+                            <p className="text-[10px] text-tertiary mt-0.5">{calculateTimeAgo(activity.created_at)}</p>
                           </div>
                         </div>
                       ))}

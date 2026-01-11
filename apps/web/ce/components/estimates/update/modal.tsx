@@ -136,9 +136,7 @@ export const UpdateEstimateModal = observer(function UpdateEstimateModal(props: 
     <div className="relative space-y-6 py-5">
       {/* Header */}
       <div className="px-5">
-        <div className="text-lg font-medium text-primary">
-          {t("project_settings.estimates.edit.title")}
-        </div>
+        <div className="text-lg font-medium text-primary">{t("project_settings.estimates.edit.title")}</div>
       </div>
 
       {/* Options */}
@@ -161,12 +159,8 @@ export const UpdateEstimateModal = observer(function UpdateEstimateModal(props: 
           className="border border-subtle rounded-md p-4 cursor-pointer hover:bg-layer-transparent-hover transition-colors"
           onClick={() => setStage("switch")}
         >
-          <h3 className="text-sm font-medium text-primary">
-            {t("project_settings.estimates.edit.change_type.title")}
-          </h3>
-          <p className="text-xs text-tertiary mt-1">
-            {t("project_settings.estimates.edit.change_type.description")}
-          </p>
+          <h3 className="text-sm font-medium text-primary">{t("project_settings.estimates.edit.change_type.title")}</h3>
+          <p className="text-xs text-tertiary mt-1">{t("project_settings.estimates.edit.change_type.description")}</p>
         </div>
       </div>
 
@@ -190,9 +184,7 @@ export const UpdateEstimateModal = observer(function UpdateEstimateModal(props: 
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </div>
-          <div className="text-lg font-medium text-primary">
-            {t("project_settings.estimates.edit.title")}
-          </div>
+          <div className="text-lg font-medium text-primary">{t("project_settings.estimates.edit.title")}</div>
         </div>
         <Button variant="primary" size="sm" onClick={handleDone}>
           {t("common.done")}
@@ -227,22 +219,16 @@ export const UpdateEstimateModal = observer(function UpdateEstimateModal(props: 
         >
           <ChevronLeftIcon className="w-4 h-4" />
         </div>
-        <div className="text-lg font-medium text-primary">
-          {t("project_settings.estimates.edit.switch.title")}
-        </div>
+        <div className="text-lg font-medium text-primary">{t("project_settings.estimates.edit.switch.title")}</div>
       </div>
 
       {/* Switch content */}
       <div className="px-5 space-y-3">
         {/* Labels */}
         <div className="flex items-center gap-4">
-          <div className="flex-1 text-xs text-tertiary">
-            {t("project_settings.estimates.edit.switch.current")}
-          </div>
+          <div className="flex-1 text-xs text-tertiary">{t("project_settings.estimates.edit.switch.current")}</div>
           <div className="w-8" />
-          <div className="flex-1 text-xs text-tertiary">
-            {t("project_settings.estimates.edit.switch.new")}
-          </div>
+          <div className="flex-1 text-xs text-tertiary">{t("project_settings.estimates.edit.switch.new")}</div>
         </div>
 
         {/* Current and New estimate type */}

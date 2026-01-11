@@ -28,7 +28,7 @@ const calculateIdealPending = (cycle: ICycle, estimateType: TCycleEstimateType):
   const daysPassed = Math.max(0, (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
   const progress = Math.min(1, daysPassed / totalDays);
 
-  const totalItems = estimateType === "points" ? (cycle.total_estimate_points || 0) : (cycle.total_issues || 0);
+  const totalItems = estimateType === "points" ? cycle.total_estimate_points || 0 : cycle.total_issues || 0;
   const idealCompleted = totalItems * progress;
   const idealPending = Math.round(totalItems - idealCompleted);
 
@@ -48,7 +48,10 @@ export const ActiveCycleBreakdown = observer(function ActiveCycleBreakdown(props
   const stats = useMemo(() => {
     if (estimateType === "points") {
       return {
-        pending: (cycle.backlog_estimate_points || 0) + (cycle.unstarted_estimate_points || 0) + (cycle.started_estimate_points || 0),
+        pending:
+          (cycle.backlog_estimate_points || 0) +
+          (cycle.unstarted_estimate_points || 0) +
+          (cycle.started_estimate_points || 0),
         started: cycle.started_estimate_points || 0,
         scope: cycle.total_estimate_points || 0,
         done: cycle.completed_estimate_points || 0,
@@ -79,9 +82,7 @@ export const ActiveCycleBreakdown = observer(function ActiveCycleBreakdown(props
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="text-sm font-medium text-secondary">
-        Breakdown of this cycle's {itemLabel}
-      </div>
+      <div className="text-sm font-medium text-secondary">Breakdown of this cycle's {itemLabel}</div>
 
       {/* Status indicator */}
       <div className="flex items-center gap-2 mt-3">
@@ -171,7 +172,9 @@ export const ActiveCycleBreakdown = observer(function ActiveCycleBreakdown(props
       {/* Excluded cancelled */}
       <div className="flex items-center gap-2 mt-4 text-xs text-tertiary">
         <Ban className="h-3 w-3" />
-        <span>Excluded {stats.cancelled} cancelled {itemLabel}</span>
+        <span>
+          Excluded {stats.cancelled} cancelled {itemLabel}
+        </span>
       </div>
     </div>
   );

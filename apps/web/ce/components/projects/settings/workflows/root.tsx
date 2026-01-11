@@ -36,10 +36,7 @@ export const ProjectWorkflowsRoot = observer(function ProjectWorkflowsRoot(props
           <div key={state.id} className="rounded-lg border border-subtle bg-surface-1 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span
-                  className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: state.color }}
-                />
+                <span className="h-3 w-3 rounded-full" style={{ backgroundColor: state.color }} />
                 <h6 className="text-sm font-medium">{state.name}</h6>
               </div>
               <div className="flex items-center gap-4">

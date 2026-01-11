@@ -20,16 +20,17 @@ export type TIssueTypeSwitcherProps = {
   disabled: boolean;
 };
 
-const IssueTypeIcon = ({ logoProps }: { logoProps: { in_use?: string; icon?: { name: string; color: string }; emoji?: { value: string } } }) => {
+const IssueTypeIcon = ({
+  logoProps,
+}: {
+  logoProps: { in_use?: string; icon?: { name: string; color: string }; emoji?: { value: string } };
+}) => {
   if (logoProps.in_use === "emoji" && logoProps.emoji?.value) {
     return <span className="text-sm">{logoProps.emoji.value}</span>;
   }
   if (logoProps.in_use === "icon" && logoProps.icon?.name) {
     return (
-      <span
-        className="material-symbols-rounded text-sm"
-        style={{ color: logoProps.icon.color }}
-      >
+      <span className="material-symbols-rounded text-sm" style={{ color: logoProps.icon.color }}>
         {logoProps.icon.name}
       </span>
     );
@@ -90,9 +91,7 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
   const filteredOptions = useMemo(() => {
     const options = workspaceIssueTypes || [];
     if (query === "") return options;
-    return options.filter((issueType) =>
-      issueType.name.toLowerCase().includes(query.toLowerCase())
-    );
+    return options.filter((issueType) => issueType.name.toLowerCase().includes(query.toLowerCase()));
   }, [workspaceIssueTypes, query]);
 
   const handleChange = (val: string) => {
@@ -112,13 +111,10 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
     <button
       ref={setReferenceElement}
       type="button"
-      className={cn(
-        "flex items-center gap-1.5 rounded px-2 py-1 hover:bg-layer-transparent-hover",
-        {
-          "cursor-not-allowed opacity-50": disabled,
-          "cursor-pointer": !disabled,
-        }
-      )}
+      className={cn("flex items-center gap-1.5 rounded px-2 py-1 hover:bg-layer-transparent-hover", {
+        "cursor-not-allowed opacity-50": disabled,
+        "cursor-pointer": !disabled,
+      })}
       onClick={handleOnClick}
       disabled={disabled}
     >

@@ -35,16 +35,17 @@ export type TIssueTypeSelectProps<T extends FieldValues> = {
   handleFormChange?: () => void;
 };
 
-const IssueTypeIcon = ({ logoProps }: { logoProps: { in_use?: string; icon?: { name: string; color: string }; emoji?: { value: string } } }) => {
+const IssueTypeIcon = ({
+  logoProps,
+}: {
+  logoProps: { in_use?: string; icon?: { name: string; color: string }; emoji?: { value: string } };
+}) => {
   if (logoProps.in_use === "emoji" && logoProps.emoji?.value) {
     return <span className="text-sm">{logoProps.emoji.value}</span>;
   }
   if (logoProps.in_use === "icon" && logoProps.icon?.name) {
     return (
-      <span
-        className="material-symbols-rounded text-sm"
-        style={{ color: logoProps.icon.color }}
-      >
+      <span className="material-symbols-rounded text-sm" style={{ color: logoProps.icon.color }}>
         {logoProps.icon.name}
       </span>
     );
@@ -123,9 +124,7 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Field
   const filteredOptions = useMemo(() => {
     const options = workspaceIssueTypes || [];
     if (query === "") return options;
-    return options.filter((issueType) =>
-      issueType.name.toLowerCase().includes(query.toLowerCase())
-    );
+    return options.filter((issueType) => issueType.name.toLowerCase().includes(query.toLowerCase()));
   }, [workspaceIssueTypes, query]);
 
   const handleChange = (val: string) => {
@@ -155,10 +154,7 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Field
       disabled={disabled}
     >
       <DropdownButton
-        className={cn(
-          "gap-1.5",
-          variant === "xs" ? "text-xs" : "text-sm"
-        )}
+        className={cn("gap-1.5", variant === "xs" ? "text-xs" : "text-sm")}
         isActive={isOpen}
         tooltipHeading={t("type")}
         tooltipContent={selectedIssueType?.name ?? placeholder ?? t("select_type")}
@@ -173,9 +169,7 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Field
         ) : (
           <span className="text-placeholder">{placeholder ?? t("select_type")}</span>
         )}
-        {renderChevron && (
-          <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />
-        )}
+        {renderChevron && <ChevronDownIcon className="h-2.5 w-2.5 flex-shrink-0" aria-hidden="true" />}
       </DropdownButton>
     </button>
   );
@@ -218,13 +212,10 @@ export const IssueTypeSelect = observer(function IssueTypeSelect<T extends Field
                     key={issueType.id}
                     value={issueType.id}
                     className={({ active, selected }) =>
-                      cn(
-                        "flex w-full cursor-pointer select-none items-center gap-2 truncate rounded-sm px-1 py-1.5",
-                        {
-                          "bg-layer-transparent-hover": active,
-                          "bg-accent-primary/10": selected,
-                        }
-                      )
+                      cn("flex w-full cursor-pointer select-none items-center gap-2 truncate rounded-sm px-1 py-1.5", {
+                        "bg-layer-transparent-hover": active,
+                        "bg-accent-primary/10": selected,
+                      })
                     }
                   >
                     {({ selected }) => (

@@ -20,9 +20,7 @@ export class ProjectAttachmentService extends APIService {
     projectId: string,
     attachmentId: string
   ): Promise<void> {
-    return this.patch(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/attachments/${attachmentId}/`
-    )
+    return this.patch(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/attachments/${attachmentId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -36,10 +34,7 @@ export class ProjectAttachmentService extends APIService {
     uploadProgressHandler?: AxiosRequestConfig["onUploadProgress"]
   ): Promise<TProjectAttachment> {
     const fileMetaData = await getFileMetaDataForUpload(file);
-    return this.post(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/attachments/`,
-      fileMetaData
-    )
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/attachments/`, fileMetaData)
       .then(async (response) => {
         const signedURLResponse: TProjectAttachmentUploadResponse = response?.data;
         const fileUploadPayload = generateFileUploadPayload(signedURLResponse, file);
@@ -64,14 +59,8 @@ export class ProjectAttachmentService extends APIService {
       });
   }
 
-  async deleteProjectAttachment(
-    workspaceSlug: string,
-    projectId: string,
-    assetId: string
-  ): Promise<void> {
-    return this.delete(
-      `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/attachments/${assetId}/`
-    )
+  async deleteProjectAttachment(workspaceSlug: string, projectId: string, assetId: string): Promise<void> {
+    return this.delete(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/attachments/${assetId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

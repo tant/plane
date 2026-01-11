@@ -177,7 +177,13 @@ export class ProjectEpics extends BaseIssuesStore implements IProjectEpics {
   override createIssue = async (workspaceSlug: string, projectId: string, data: Partial<TIssue>) => {
     // Ensure is_epic flag is set
     const epicData = { ...data, is_epic: true };
-    const response = await super.createIssue(workspaceSlug, projectId, epicData, "", projectId === this.router.projectId);
+    const response = await super.createIssue(
+      workspaceSlug,
+      projectId,
+      epicData,
+      "",
+      projectId === this.router.projectId
+    );
     return response;
   };
 

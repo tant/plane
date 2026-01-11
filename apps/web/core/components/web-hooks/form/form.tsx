@@ -92,11 +92,7 @@ export const WebhookForm = observer(function WebhookForm(props: Props) {
       {data ? (
         <div className="pt-0 space-y-5">
           <WebhookSecretKey data={data} />
-          <Button
-            size="lg"
-            type="submit"
-            loading={isSubmitting}
-          >
+          <Button size="lg" type="submit" loading={isSubmitting}>
             {isSubmitting ? t("updating") : t("update")}
           </Button>
         </div>

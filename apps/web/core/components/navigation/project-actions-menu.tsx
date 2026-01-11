@@ -97,9 +97,7 @@ export function ProjectActionsMenu({
       </CustomMenu.MenuItem>
       {/* Leave project */}
       {!isAuthorized && (
-        <CustomMenu.MenuItem
-          onClick={onLeaveProject}
-        >
+        <CustomMenu.MenuItem onClick={onLeaveProject}>
           <div className="flex items-center justify-start gap-2">
             <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
             <span>{t("leave_project")}</span>

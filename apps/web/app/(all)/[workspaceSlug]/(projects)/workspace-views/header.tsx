@@ -164,11 +164,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
               />
             </FiltersDropdown>
           )}
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => setCreateViewModal(true)}
-          >
+          <Button variant="primary" size="lg" onClick={() => setCreateViewModal(true)}>
             {t("workspace_views.add_view")}
           </Button>
           <div className="hidden md:block">

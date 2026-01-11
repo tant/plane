@@ -21,7 +21,16 @@ export interface EpicModalProps {
 }
 
 export const CreateUpdateEpicModal = observer(function CreateUpdateEpicModal(props: EpicModalProps) {
-  const { data, isOpen, onClose, beforeFormSubmit, onSubmit, fetchIssueDetails, primaryButtonText, isProjectSelectionDisabled } = props;
+  const {
+    data,
+    isOpen,
+    onClose,
+    beforeFormSubmit,
+    onSubmit,
+    fetchIssueDetails,
+    primaryButtonText,
+    isProjectSelectionDisabled,
+  } = props;
   const { projectId } = useParams();
 
   // Merge data with is_epic flag

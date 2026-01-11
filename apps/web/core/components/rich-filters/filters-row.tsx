@@ -84,20 +84,12 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   const rightContent = !disabledAllOperations && (
     <>
       <ElementTransition show={filter.canClearFilters}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={filter.clearFilters}
-        >
+        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.clearFilters}>
           {filter.clearFilterOptions?.label ?? "Clear all"}
         </Button>
       </ElementTransition>
       <ElementTransition show={filter.canSaveView}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={filter.saveView}
-        >
+        <Button variant="secondary" className={COMMON_OPERATION_BUTTON_CLASSNAME} onClick={filter.saveView}>
           {filter.saveViewOptions?.label ?? "Save view"}
         </Button>
       </ElementTransition>

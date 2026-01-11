@@ -38,7 +38,11 @@ function WorkItemTypesSettingsPage() {
           title={t("project_settings.work_item_types.heading")}
           description={t("project_settings.work_item_types.description")}
         />
-        <ProjectWorkItemTypesRoot workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={canPerformProjectAdminActions} />
+        <ProjectWorkItemTypesRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          isAdmin={canPerformProjectAdminActions}
+        />
       </div>
     </SettingsContentWrapper>
   );

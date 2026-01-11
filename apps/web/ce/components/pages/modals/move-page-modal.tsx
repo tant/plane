@@ -81,12 +81,7 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
 
     try {
       setIsSubmitting(true);
-      await projectPageService.move(
-        workspaceSlug.toString(),
-        currentProjectId,
-        pageId,
-        selectedProjectId
-      );
+      await projectPageService.move(workspaceSlug.toString(), currentProjectId, pageId, selectedProjectId);
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
@@ -128,10 +123,7 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Combobox.Options
-          static
-          className="py-2 vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto"
-        >
+        <Combobox.Options static className="py-2 vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-y-auto">
           {filteredProjectIds.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-3 py-8 text-center">
               <p className="text-sm text-tertiary">{t("project_page.move.no_projects")}</p>

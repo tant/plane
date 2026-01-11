@@ -28,7 +28,11 @@ export interface IIssueTypeStore {
   fetchProjectIssueTypes: (workspaceSlug: string, projectId: string) => Promise<IProjectIssueType[]>;
   // workspace-level crud actions
   createIssueType: (workspaceSlug: string, data: Partial<IIssueType>) => Promise<IIssueType>;
-  updateIssueType: (workspaceSlug: string, issueTypeId: string, data: Partial<IIssueType>) => Promise<IIssueType | undefined>;
+  updateIssueType: (
+    workspaceSlug: string,
+    issueTypeId: string,
+    data: Partial<IIssueType>
+  ) => Promise<IIssueType | undefined>;
   deleteIssueType: (workspaceSlug: string, issueTypeId: string) => Promise<void>;
   // project-level crud actions
   addIssueTypeToProject: (workspaceSlug: string, projectId: string, issueTypeId: string) => Promise<IProjectIssueType>;
@@ -225,7 +229,9 @@ export class IssueTypeStore implements IIssueTypeStore {
    * Adds an issue type to a project
    */
   addIssueTypeToProject = async (workspaceSlug: string, projectId: string, issueTypeId: string) => {
-    const response = await this.projectIssueTypeService.create(workspaceSlug, projectId, { issue_type_id: issueTypeId });
+    const response = await this.projectIssueTypeService.create(workspaceSlug, projectId, {
+      issue_type_id: issueTypeId,
+    });
     runInAction(() => {
       set(this.projectIssueTypeMap, [response.id], response);
     });

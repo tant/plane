@@ -38,7 +38,11 @@ function ProjectUpdatesSettingsPage() {
           title={t("project_settings.project_updates.heading")}
           description={t("project_settings.project_updates.description")}
         />
-        <ProjectUpdatesRoot workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={canPerformProjectAdminActions} />
+        <ProjectUpdatesRoot
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          isAdmin={canPerformProjectAdminActions}
+        />
       </div>
     </SettingsContentWrapper>
   );

@@ -101,11 +101,7 @@ export class ProjectIssueTypeService extends APIService {
   /**
    * Adds an issue type to a project
    */
-  async create(
-    workspaceSlug: string,
-    projectId: string,
-    data: { issue_type_id: string }
-  ): Promise<IProjectIssueType> {
+  async create(workspaceSlug: string, projectId: string, data: { issue_type_id: string }): Promise<IProjectIssueType> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/all/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -122,10 +118,7 @@ export class ProjectIssueTypeService extends APIService {
     projectIssueTypeId: string,
     data: Partial<IProjectIssueType>
   ): Promise<IProjectIssueType> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${projectIssueTypeId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${projectIssueTypeId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -136,9 +129,7 @@ export class ProjectIssueTypeService extends APIService {
    * Removes an issue type from a project
    */
   async destroy(workspaceSlug: string, projectId: string, projectIssueTypeId: string): Promise<void> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${projectIssueTypeId}/`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-types/${projectIssueTypeId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

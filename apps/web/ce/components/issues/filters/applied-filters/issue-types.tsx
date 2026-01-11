@@ -15,16 +15,17 @@ export const AppliedIssueTypeFilters = observer(function AppliedIssueTypeFilters
   // store hooks
   const { getIssueTypeById } = useIssueType();
 
-  const renderIcon = (logoProps: { in_use?: string; icon?: { name: string; color: string }; emoji?: { value: string } }) => {
+  const renderIcon = (logoProps: {
+    in_use?: string;
+    icon?: { name: string; color: string };
+    emoji?: { value: string };
+  }) => {
     if (logoProps.in_use === "emoji" && logoProps.emoji?.value) {
       return <span className="text-xs">{logoProps.emoji.value}</span>;
     }
     if (logoProps.in_use === "icon" && logoProps.icon?.name) {
       return (
-        <span
-          className="material-symbols-rounded text-xs"
-          style={{ color: logoProps.icon.color }}
-        >
+        <span className="material-symbols-rounded text-xs" style={{ color: logoProps.icon.color }}>
           {logoProps.icon.name}
         </span>
       );

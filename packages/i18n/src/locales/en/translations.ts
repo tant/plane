@@ -1852,7 +1852,8 @@ export default {
     workflows: {
       label: "Workflows",
       heading: "Workflows",
-      description: "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
+      description:
+        "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
       allow_new_work_items: "Allow new work items",
       add_permitted_state_change: "Add permitted state change",
     },
@@ -1874,7 +1875,8 @@ export default {
       properties: "Epic Properties",
       properties_description: "Customize the properties available for epics in this project",
       add_custom_properties: "Add custom properties",
-      custom_properties_empty: "No custom properties defined yet. Add properties to capture additional epic information.",
+      custom_properties_empty:
+        "No custom properties defined yet. Add properties to capture additional epic information.",
       add_new_property: "Add property",
       not_found: "Epic not found",
       not_found_description: "The epic you are looking for does not exist or has been deleted.",
@@ -1885,7 +1887,8 @@ export default {
       heading: "Project Updates",
       description: "Consolidated tracking and progress monitoring for this project",
       turn_on: "Turn on Project Updates",
-      turn_on_description: "See all updates on demand from anyone in this project. Easily track updates across four preset categories.",
+      turn_on_description:
+        "See all updates on demand from anyone in this project. Easily track updates across four preset categories.",
       enabled: "Project updates enabled successfully",
       disabled: "Project updates disabled successfully",
     },

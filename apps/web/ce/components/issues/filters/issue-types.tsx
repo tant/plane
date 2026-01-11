@@ -42,16 +42,17 @@ export const FilterIssueTypes = observer(function FilterIssueTypes(props: Props)
     else setItemsToRender(sortedOptions.length);
   };
 
-  const renderIcon = (logoProps: { in_use?: string; icon?: { name: string; color: string }; emoji?: { value: string } }) => {
+  const renderIcon = (logoProps: {
+    in_use?: string;
+    icon?: { name: string; color: string };
+    emoji?: { value: string };
+  }) => {
     if (logoProps.in_use === "emoji" && logoProps.emoji?.value) {
       return <span className="text-sm">{logoProps.emoji.value}</span>;
     }
     if (logoProps.in_use === "icon" && logoProps.icon?.name) {
       return (
-        <span
-          className="material-symbols-rounded text-sm"
-          style={{ color: logoProps.icon.color }}
-        >
+        <span className="material-symbols-rounded text-sm" style={{ color: logoProps.icon.color }}>
           {logoProps.icon.name}
         </span>
       );

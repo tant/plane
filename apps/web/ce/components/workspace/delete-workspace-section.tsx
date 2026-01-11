@@ -50,11 +50,7 @@ export const DeleteWorkspaceSection = observer(function DeleteWorkspaceSection(p
                 {t("workspace_settings.settings.general.delete_workspace_description")}
               </span>
               <div>
-                <Button
-                  variant="error-fill"
-                  size="lg"
-                  onClick={() => setDeleteWorkspaceModal(true)}
-                >
+                <Button variant="error-fill" size="lg" onClick={() => setDeleteWorkspaceModal(true)}>
                   {t("workspace_settings.settings.general.delete_btn")}
                 </Button>
               </div>

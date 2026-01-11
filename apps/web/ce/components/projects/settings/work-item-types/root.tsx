@@ -17,12 +17,7 @@ export const ProjectWorkItemTypesRoot = observer(function ProjectWorkItemTypesRo
   const { workspaceSlug, projectId, isAdmin } = props;
   const { t } = useTranslation();
   // store hooks
-  const {
-    getProjectIssueTypes,
-    projectFetchedMap,
-    fetchProjectIssueTypes,
-    getIssueTypeById
-  } = useIssueType();
+  const { getProjectIssueTypes, projectFetchedMap, fetchProjectIssueTypes, getIssueTypeById } = useIssueType();
 
   // Fetch project issue types
   useEffect(() => {
@@ -48,12 +43,7 @@ export const ProjectWorkItemTypesRoot = observer(function ProjectWorkItemTypesRo
     <div className="space-y-4">
       {/* Add button */}
       <div className="flex justify-end">
-        <Button
-          variant="primary"
-          size="sm"
-          prependIcon={<Plus className="h-4 w-4" />}
-          disabled={!isAdmin}
-        >
+        <Button variant="primary" size="sm" prependIcon={<Plus className="h-4 w-4" />} disabled={!isAdmin}>
           {t("project_settings.work_item_types.add_type")}
         </Button>
       </div>
@@ -85,19 +75,12 @@ export const ProjectWorkItemTypesRoot = observer(function ProjectWorkItemTypesRo
                       </span>
                     )}
                   </div>
-                  {issueType.description && (
-                    <p className="text-xs text-tertiary">{issueType.description}</p>
-                  )}
+                  {issueType.description && <p className="text-xs text-tertiary">{issueType.description}</p>}
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 {!projectIssueType.is_default && (
-                  <ToggleSwitch
-                    value={true}
-                    onChange={() => {}}
-                    disabled={!isAdmin}
-                    size="sm"
-                  />
+                  <ToggleSwitch value={true} onChange={() => {}} disabled={!isAdmin} size="sm" />
                 )}
               </div>
             </div>

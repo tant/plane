@@ -22,11 +22,7 @@ export class ProjectUpdateService extends APIService {
       });
   }
 
-  async createUpdate(
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<IProjectUpdate>
-  ): Promise<IProjectUpdate> {
+  async createUpdate(workspaceSlug: string, projectId: string, data: Partial<IProjectUpdate>): Promise<IProjectUpdate> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/updates/`, data)
       .then((response) => response?.data)
       .catch((error) => {
