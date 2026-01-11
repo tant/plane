@@ -2,10 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { LockKeyhole, LockKeyholeOpen } from "lucide-react";
 // plane imports
-import { PROJECT_PAGE_TRACKER_ELEMENTS } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
-// helpers
-import { captureClick } from "@/helpers/event-tracker.helper";
 // hooks
 import { usePageOperations } from "@/hooks/use-page-operations";
 // store
