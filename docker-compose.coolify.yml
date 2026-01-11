@@ -36,7 +36,8 @@ x-app-env: &app-env
   # Internal endpoint for API to access MinIO directly (no SSL)
   AWS_S3_ENDPOINT_URL: http://plane-minio:9000
   AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
-  MINIO_ENDPOINT_SSL: "0"
+  # IMPORTANT: Set to "1" because presigned URLs are accessed by browser via HTTPS (Coolify's Caddy)
+  MINIO_ENDPOINT_SSL: "1"
   # RabbitMQ - Internal
   RABBITMQ_HOST: plane-mq
   RABBITMQ_PORT: "5672"
