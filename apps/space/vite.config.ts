@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import * as dotenv from "@dotenvx/dotenvx";
 import { reactRouter } from "@react-router/dev/vite";
@@ -5,7 +6,10 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { joinUrlPath } from "@plane/utils";
 
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+const envPath = path.resolve(__dirname, ".env");
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
 
 // Expose only vars starting with VITE_
 const viteEnv = Object.keys(process.env)
@@ -24,6 +28,13 @@ export default defineConfig(() => ({
   },
   build: {
     assetsInlineLimit: 0,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress sourcemap warnings from dependencies
+        if (warning.code === "SOURCEMAP_ERROR") return;
+        warn(warning);
+      },
+    },
   },
   plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
   resolve: {
