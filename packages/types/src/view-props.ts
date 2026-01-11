@@ -1,4 +1,5 @@
 import type { TIssue } from "./issues/issue";
+import type { IProjectMemberNavigationPreferences } from "./project/projects";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import type { CompleteOrEmpty } from "./utils";
 
@@ -192,6 +193,16 @@ export interface IIssueFiltersResponse {
   rich_filters: TWorkItemFilterExpression;
   display_filters: IIssueDisplayFilterOptions;
   display_properties: IIssueDisplayProperties;
+}
+
+export interface IProjectUserPropertiesResponse extends IIssueFiltersResponse {
+  sort_order: number;
+  preferences: {
+    pages: {
+      block_display: boolean;
+    };
+    navigation: IProjectMemberNavigationPreferences;
+  };
 }
 
 export interface IWorkspaceUserPropertiesResponse extends IIssueFiltersResponse {

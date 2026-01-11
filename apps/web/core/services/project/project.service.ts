@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@plane/constants";
 import type {
   GithubRepositoriesResponse,
+  IProjectUserPropertiesResponse,
   ISearchIssueResponse,
   IUserActivityResponse,
   TProjectAnalyticsCount,
@@ -99,6 +100,27 @@ export class ProjectService extends APIService {
     }
   ): Promise<any> {
     await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-views/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // User Properties
+  async getProjectUserProperties(workspaceSlug: string, projectId: string): Promise<IProjectUserPropertiesResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateProjectUserProperties(
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IProjectUserPropertiesResponse>
+  ): Promise<IProjectUserPropertiesResponse> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
