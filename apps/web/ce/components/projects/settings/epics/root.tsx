@@ -1,11 +1,18 @@
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
+import { useTheme } from "next-themes";
 import { Plus, Settings2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ToggleSwitch, Button, Loader } from "@plane/ui";
+import { ToggleSwitch, Loader } from "@plane/ui";
+// components
+import { EmptyState } from "@/components/common/empty-state";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
+// assets
+import EpicsSettingsDark from "@/app/assets/empty-state/epics/settings-dark.webp?url";
+import EpicsSettingsLight from "@/app/assets/empty-state/epics/settings-light.webp?url";
 
 type Props = {
   workspaceSlug: string;
@@ -20,12 +27,13 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
   const [isUpdating, setIsUpdating] = useState(false);
   // store hooks
   const { getProjectById, updateProject } = useProject();
+  const { resolvedTheme } = useTheme();
 
   const currentProjectDetails = getProjectById(projectId);
   const isEpicEnabled = currentProjectDetails?.is_epic_enabled ?? false;
 
   const handleToggle = useCallback(async () => {
-    if (!currentProjectDetails) return;
+    if (!currentProjectDetails || isUpdating) return;
 
     setIsUpdating(true);
     try {
@@ -47,7 +55,7 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
     } finally {
       setIsUpdating(false);
     }
-  }, [currentProjectDetails, workspaceSlug, projectId, isEpicEnabled, updateProject, t]);
+  }, [currentProjectDetails, workspaceSlug, projectId, isEpicEnabled, updateProject, t, isUpdating]);
 
   if (!currentProjectDetails) {
     return (
@@ -59,26 +67,32 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Epic enable card */}
-      <div className="flex items-center justify-between rounded-lg border border-subtle bg-surface-1 p-6">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-md bg-surface-2">
-            <Settings2 className="h-6 w-6 text-tertiary" />
-          </div>
-          <div>
-            <h5 className="text-sm font-medium">{t("project_settings.epics.turn_on")}</h5>
-            <p className="text-xs text-tertiary">{t("project_settings.epics.turn_on_description")}</p>
-          </div>
-        </div>
-        <ToggleSwitch value={isEpicEnabled} onChange={handleToggle} disabled={!isAdmin || isUpdating} size="sm" />
-      </div>
+  const emptyStateImage = resolvedTheme === "dark" ? EpicsSettingsDark : EpicsSettingsLight;
 
-      {/* Properties section - only show when enabled */}
-      {isEpicEnabled && (
+  // When epics is enabled
+  if (isEpicEnabled) {
+    return (
+      <div className="space-y-6">
+        {/* Header with toggle */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-medium">{t("common.epics")}</h3>
+            <p className="text-sm text-tertiary">{t("project_settings.epics.description")}</p>
+          </div>
+          <ToggleSwitch
+            value={isEpicEnabled}
+            onChange={() => void handleToggle()}
+            disabled={!isAdmin || isUpdating}
+            size="sm"
+          />
+        </div>
+
+        {/* Properties section */}
         <div className="space-y-4">
-          <div className="flex items-center gap-3 rounded-lg border border-subtle bg-surface-1 p-4 cursor-pointer hover:bg-surface-2">
+          <button
+            type="button"
+            className="flex w-full items-center gap-3 rounded-lg border border-subtle bg-surface-1 p-4 text-left hover:bg-surface-2"
+          >
             <div className="flex h-10 w-10 items-center justify-center rounded-md bg-surface-2">
               <Settings2 className="h-5 w-5 text-tertiary" />
             </div>
@@ -86,10 +100,10 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
               <span className="text-sm font-medium">{t("project_settings.epics.properties")}</span>
               <p className="text-xs text-tertiary">{t("project_settings.epics.properties_description")}</p>
             </div>
-          </div>
+          </button>
 
           {/* Empty state for custom properties */}
-          <div className="ml-12 rounded-lg border border-dashed border-subtle p-6">
+          <div className="ml-14 rounded-lg border border-dashed border-subtle p-6">
             <div className="flex flex-col items-center gap-3 text-center">
               <Settings2 className="h-8 w-8 text-tertiary" />
               <div>
@@ -102,7 +116,40 @@ export const ProjectEpicsRoot = observer(function ProjectEpicsRoot(props: Props)
             </div>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  // Empty state when epics is not enabled
+  return (
+    <div className="space-y-6">
+      {/* Header with Enable button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-medium">{t("common.epics")}</h3>
+          <p className="text-sm text-tertiary">{t("project_settings.epics.description")}</p>
+        </div>
+        <Button
+          variant="primary"
+          onClick={() => void handleToggle()}
+          disabled={!isAdmin || isUpdating}
+          loading={isUpdating}
+        >
+          {t("common.enable")}
+        </Button>
+      </div>
+
+      {/* Empty state */}
+      <EmptyState
+        title={t("project_settings.epics.enable_title")}
+        description={t("project_settings.epics.enable_description")}
+        image={emptyStateImage}
+        primaryButton={{
+          text: t("common.enable"),
+          onClick: () => void handleToggle(),
+        }}
+        disabled={!isAdmin || isUpdating}
+      />
     </div>
   );
 });
