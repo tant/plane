@@ -73,12 +73,6 @@ class TriageStateManager(SoftDeletionManager):
 
 
 class State(ProjectBaseModel):
-    # Override project field to avoid clash with Project.project_state field
-    project = models.ForeignKey(
-        "db.Project",
-        on_delete=models.CASCADE,
-        related_name="states",
-    )
     name = models.CharField(max_length=255, verbose_name="State Name")
     description = models.TextField(verbose_name="State Description", blank=True)
     color = models.CharField(max_length=255, verbose_name="State Color")

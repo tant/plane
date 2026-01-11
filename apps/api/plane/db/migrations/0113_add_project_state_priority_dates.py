@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="project",
-            name="project_state",
+            name="status",
             field=models.CharField(
                 choices=[
                     ("draft", "Draft"),
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ],
                 default="draft",
                 max_length=20,
-                verbose_name="Project State",
+                verbose_name="Project Status",
             ),
         ),
         migrations.AddField(

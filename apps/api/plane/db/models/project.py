@@ -154,12 +154,12 @@ class Project(BaseModel):
     # external_id for imports
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
-    # Project state and priority
-    project_state = models.CharField(
+    # Project status and priority
+    status = models.CharField(
         max_length=20,
         choices=ProjectState.choices(),
         default="draft",
-        verbose_name="Project State",
+        verbose_name="Project Status",
     )
     priority = models.CharField(
         max_length=20,

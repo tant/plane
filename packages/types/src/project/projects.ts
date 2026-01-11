@@ -73,8 +73,8 @@ export interface IProject extends IPartialProject {
   members?: string[];
   timezone?: string;
   next_work_item_sequence?: number;
-  // Project state and timeline
-  project_state?: TProjectState;
+  // Project status and timeline
+  status?: TProjectState;
   priority?: TProjectPriority | null;
   start_date?: string | null;
   target_date?: string | null;

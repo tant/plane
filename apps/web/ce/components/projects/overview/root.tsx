@@ -518,7 +518,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
       if (!currentProjectDetails) return;
 
       try {
-        await updateProject(workspaceSlug, projectId, { project_state: state });
+        await updateProject(workspaceSlug, projectId, { status: state });
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: t("toast.success"),
@@ -1045,7 +1045,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
                     </div>
                     <div className="relative">
                       <select
-                        value={currentProjectDetails.project_state || "draft"}
+                        value={currentProjectDetails.status || "draft"}
                         onChange={(e) => handleProjectStateUpdate(e.target.value as TProjectState)}
                         className="appearance-none bg-transparent text-sm px-2 py-1 pr-6 rounded hover:bg-layer-2 cursor-pointer border-0 focus:outline-none focus:ring-0"
                       >
