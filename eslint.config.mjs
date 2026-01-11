@@ -135,15 +135,13 @@ export default defineConfig([
       "react-hooks/rules-of-hooks": "warn",
       "react-hooks/set-state-in-effect": "warn",
       "react-hooks/static-components": "warn",
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowExportNames: ["meta", "links", "headers", "loader", "action"] },
-      ],
       "react/display-name": "warn",
       "react/jsx-no-target-blank": "warn",
       "react/no-unknown-property": "warn",
       "react/prop-types": "off",
       "valid-typeof": "warn",
+      // Disable warnings for upstream code patterns (to reduce noise and avoid conflicts when merging)
+      "react-refresh/only-export-components": "off", // barrel files use export *
     },
   },
   {

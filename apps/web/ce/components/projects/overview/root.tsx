@@ -246,8 +246,8 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
     };
 
     projectStates.forEach((state) => {
-      if (state.group && statesByGroup[state.group as TStateGroups]) {
-        statesByGroup[state.group as TStateGroups].push(state.id);
+      if (state.group && statesByGroup[state.group]) {
+        statesByGroup[state.group].push(state.id);
       }
     });
 
@@ -730,7 +730,7 @@ export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: 
     if (typeof currentProjectDetails.project_lead === "string") {
       return currentProjectDetails.project_lead;
     }
-    return (currentProjectDetails.project_lead as IUserLite).id;
+    return (currentProjectDetails.project_lead).id;
   }, [currentProjectDetails?.project_lead]);
 
   // Get project lead details for display (kept for future use)
