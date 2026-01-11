@@ -64,7 +64,6 @@ services:
       - live
     networks:
       - plane-net
-      - coolify
 
   # ===========================================
   # Frontend Services
@@ -118,7 +117,6 @@ services:
         condition: service_healthy
     networks:
       - plane-net
-      - coolify
 
   # ===========================================
   # Backend Services
@@ -136,7 +134,6 @@ services:
         condition: service_healthy
     networks:
       - plane-net
-      - coolify
 
   api:
     build:
@@ -159,7 +156,6 @@ services:
       start_period: 90s
     networks:
       - plane-net
-      - coolify
 
   worker:
     build:
@@ -174,7 +170,6 @@ services:
         condition: service_healthy
     networks:
       - plane-net
-      - coolify
 
   beat-worker:
     build:
@@ -189,7 +184,6 @@ services:
         condition: service_healthy
     networks:
       - plane-net
-      - coolify
 
   # ===========================================
   # RabbitMQ - Internal Service (no shared alternative)
@@ -214,8 +208,6 @@ services:
 networks:
   plane-net:
     driver: bridge
-  coolify:
-    external: true
 
 volumes:
   mqdata:
