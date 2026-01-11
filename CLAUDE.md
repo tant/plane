@@ -128,6 +128,20 @@ pnpm dev                                      # Start frontend apps
 # Access app at http://localhost:3000
 ```
 
+## Coolify Deployment
+
+- **Coolify Dashboard**: https://app.nextis.dev/
+- **Production URL**: https://plane.carp.vn
+- **Docker Compose**: `docker-compose.coolify.yml`
+- **Proxy**: Nginx-based (`apps/proxy/Dockerfile.coolify`)
+
+### Environment Variables (Coolify)
+
+Key variables to configure in Coolify UI:
+- `AWS_S3_ENDPOINT_URL`: Use `https://plane.carp.vn` (not internal MinIO URL) to avoid Mixed Content errors
+- `MINIO_ENDPOINT_SSL`: Set to `1` when using HTTPS endpoint
+- `WEB_URL`: `https://plane.carp.vn`
+
 ## Pre-Deployment Checklist
 
 **IMPORTANT**: Local frontend development (`pnpm dev`) does NOT validate Django API code. Python import errors and Celery task issues will only appear when the API container starts in production.
