@@ -9,6 +9,7 @@ class Migration(migrations.Migration):
 
     Branch A (custom features):
     0112 → 0113_add_project_state → 0114_add_project_updates
+         → 0115_rename_issueuserproperty (stub) → 0116_migrate (stub)
 
     Branch B (upstream):
     0112 → 0113_webhook_version → 0114_projectuserproperty_delete
@@ -16,8 +17,8 @@ class Migration(migrations.Migration):
     """
 
     dependencies = [
-        ("db", "0114_add_project_updates"),
         ("db", "0115_auto_20260105_1406"),
+        ("db", "0116_migrate_project_user_properties_data"),
     ]
 
     operations = [
