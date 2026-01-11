@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 
 import { Disclosure } from "@headlessui/react";
 // plane imports
-import { ROLE, EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
+import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TrashIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -16,8 +16,6 @@ import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useWorkspace } from "@/hooks/store/use-workspace";
-// plane web constants
 
 export interface RowData {
   member: IWorkspaceMember;
@@ -120,7 +118,6 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
   const {
     workspace: { updateMember },
   } = useMember();
-  const { mutateWorkspaceMembersActivity } = useWorkspace();
   const { data: currentUser } = useUser();
 
   // derived values
@@ -155,7 +152,6 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
                   await updateMember(workspaceSlug.toString(), rowData.member.id, {
                     role: value as unknown as EUserPermissions,
                   });
-                  void mutateWorkspaceMembersActivity(workspaceSlug);
                 } catch (err: unknown) {
                   const error = err as { error?: string | string[] };
                   const errorString = Array.isArray(error?.error) ? error.error[0] : error?.error;
