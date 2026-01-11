@@ -338,7 +338,7 @@ export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
 
   fetchProjectNavigationPreferences = async (workspaceSlug: string) => {
     try {
-      const response = await this.workspaceService.fetchWorkspaceUserProperties(workspaceSlug);
+      const response = await this.workspaceService.fetchWorkspaceFilters(workspaceSlug);
 
       runInAction(() => {
         this.projectNavigationPreferencesMap[workspaceSlug] = response;
@@ -365,7 +365,7 @@ export abstract class BaseWorkspaceRootStore implements IWorkspaceRootStore {
       });
 
       // Call API to persist changes
-      await this.workspaceService.patchWorkspaceUserProperties(workspaceSlug, data);
+      await this.workspaceService.patchWorkspaceFilters(workspaceSlug, data);
     } catch (error) {
       // Rollback on failure
       runInAction(() => {

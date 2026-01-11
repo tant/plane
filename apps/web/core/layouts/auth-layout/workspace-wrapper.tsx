@@ -24,7 +24,7 @@ import {
   WORKSPACE_FAVORITE,
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
-  WORKSPACE_USER_PROPERTIES,
+  WORKSPACE_PROJECT_NAVIGATION_PREFERENCES,
 } from "@/constants/fetch-keys";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
@@ -114,9 +114,9 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  // fetch workspace user properties (project navigation preferences)
+  // fetch workspace project navigation preferences
   useSWR(
-    workspaceSlug ? WORKSPACE_USER_PROPERTIES(workspaceSlug.toString()) : null,
+    workspaceSlug ? WORKSPACE_PROJECT_NAVIGATION_PREFERENCES(workspaceSlug.toString()) : null,
     workspaceSlug ? () => fetchProjectNavigationPreferences(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );

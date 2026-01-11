@@ -399,7 +399,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async fetchWorkspaceUserProperties(workspaceSlug: string): Promise<IWorkspaceUserPropertiesResponse> {
+  async fetchWorkspaceFilters(workspaceSlug: string): Promise<IWorkspaceUserPropertiesResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-properties/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -407,7 +407,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async patchWorkspaceUserProperties(
+  async patchWorkspaceFilters(
     workspaceSlug: string,
     data: Partial<IWorkspaceUserPropertiesResponse>
   ): Promise<IWorkspaceUserPropertiesResponse> {
