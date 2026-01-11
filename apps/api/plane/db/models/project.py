@@ -383,3 +383,37 @@ class ProjectPublicMember(ProjectBaseModel):
         verbose_name_plural = "Project Public Members"
         db_table = "project_public_members"
         ordering = ("-created_at",)
+
+
+class ProjectUserProperty(ProjectBaseModel):
+    from .issue import get_default_filters, get_default_display_filters, get_default_display_properties
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="project_property_user",
+    )
+    filters = models.JSONField(default=get_default_filters)
+    display_filters = models.JSONField(default=get_default_display_filters)
+    display_properties = models.JSONField(default=get_default_display_properties)
+    rich_filters = models.JSONField(default=dict)
+    preferences = models.JSONField(default=get_default_preferences)
+    sort_order = models.FloatField(default=65535)
+
+    class Meta:
+        verbose_name = "Project User Property"
+        verbose_name_plural = "Project User Properties"
+        db_table = "project_user_properties"
+        ordering = ("-created_at",)
+        unique_together = ["user", "project", "deleted_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "project"],
+                condition=Q(deleted_at__isnull=True),
+                name="project_user_property_unique_user_project_when_deleted_at_null",
+            )
+        ]
+
+    def __str__(self):
+        """Return properties status of the project"""
+        return str(self.user)
