@@ -351,6 +351,26 @@ export const coreRoutes: RouteConfigEntry[] = [
                 "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/page.tsx"
               ),
             ]),
+            // Project Workflows
+            route(
+              ":workspaceSlug/settings/projects/:projectId/workflows",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/workflows/page.tsx"
+            ),
+            // Project Work Item Types
+            route(
+              ":workspaceSlug/settings/projects/:projectId/work-item-types",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/work-item-types/page.tsx"
+            ),
+            // Project Epics
+            route(
+              ":workspaceSlug/settings/projects/:projectId/epics",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/epics/page.tsx"
+            ),
+            // Project Updates
+            route(
+              ":workspaceSlug/settings/projects/:projectId/project-updates",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/project-updates/page.tsx"
+            ),
           ]),
         ]),
       ]),
