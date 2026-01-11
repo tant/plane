@@ -82,7 +82,7 @@ export const ActiveCycleBreakdown = observer(function ActiveCycleBreakdown(props
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="text-sm font-medium text-secondary">Breakdown of this cycle's {itemLabel}</div>
+      <div className="text-sm font-medium text-secondary">Breakdown of this cycle&apos;s {itemLabel}</div>
 
       {/* Status indicator */}
       <div className="flex items-center gap-2 mt-3">
@@ -119,7 +119,7 @@ export const ActiveCycleBreakdown = observer(function ActiveCycleBreakdown(props
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">
               <div className="w-4 h-0.5 bg-gray-400 border-dashed" style={{ borderStyle: "dashed" }} />
-              <span className="text-secondary">Today's ideal Pending</span>
+              <span className="text-secondary">Today&apos;s ideal Pending</span>
             </div>
             <span className="font-medium">{idealPending}</span>
           </div>
