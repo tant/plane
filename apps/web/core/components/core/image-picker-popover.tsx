@@ -28,14 +28,11 @@ type TTabOption = {
   isEnabled: boolean;
 };
 
-type TFormValues = {
-  search: string;
-};
-
 type Props = {
   label: string | React.ReactNode;
   value: string | null;
-  control: Control<TFormValues>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<any>;
   onChange: (data: string) => void;
   disabled?: boolean;
   tabIndex?: number;

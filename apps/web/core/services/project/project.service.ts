@@ -113,27 +113,6 @@ export class ProjectService extends APIService {
       });
   }
 
-  // User Properties
-  async getProjectUserProperties(workspaceSlug: string, projectId: string): Promise<IProjectUserPropertiesResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateProjectUserProperties(
-    workspaceSlug: string,
-    projectId: string,
-    data: Partial<IProjectUserPropertiesResponse>
-  ): Promise<IProjectUserPropertiesResponse> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-properties/`, data)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async getGithubRepositories(url: string): Promise<GithubRepositoriesResponse> {
     return this.request({
       method: "get",

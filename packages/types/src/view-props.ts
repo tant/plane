@@ -147,7 +147,8 @@ export interface IIssueDisplayFilterOptions {
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
-  layout?: TIssueLayouts;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  layout?: any; // TODO: Need to fix this and set it to enum EIssueLayoutTypes
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;

@@ -1864,23 +1864,6 @@ export default {
       empty: "No work item types configured for this project.",
     },
     epics: {
-      description: "For larger bodies of work that span several cycles and can live across modules",
-      properties: "Properties",
-      properties_description: "Add custom properties to your epic.",
-      add_custom_properties: "Add custom properties",
-      custom_properties_empty: "New properties you add for this work item type will show here.",
-      add_new_property: "Add new property",
-    },
-    project_updates: {
-      label: "Project Updates",
-      heading: "Project Updates",
-      description: "Consolidated tracking and progress monitoring for this project",
-      turn_on: "Turn on Project Updates",
-      turn_on_description: "See all updates on demand from anyone in this project. Easily track updates across four preset categories.",
-      enabled: "Project updates enabled successfully",
-      disabled: "Project updates disabled successfully",
-    },
-    epics: {
       label: "Epics",
       heading: "Epics",
       description: "Manage high-level work items that span multiple sprints or cycles",
@@ -1896,6 +1879,15 @@ export default {
       not_found: "Epic not found",
       not_found_description: "The epic you are looking for does not exist or has been deleted.",
       view_all: "View all epics",
+    },
+    project_updates: {
+      label: "Project Updates",
+      heading: "Project Updates",
+      description: "Consolidated tracking and progress monitoring for this project",
+      turn_on: "Turn on Project Updates",
+      turn_on_description: "See all updates on demand from anyone in this project. Easily track updates across four preset categories.",
+      enabled: "Project updates enabled successfully",
+      disabled: "Project updates disabled successfully",
     },
     empty_state: {
       labels: {
