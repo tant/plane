@@ -1,0 +1,23 @@
+# Nginx-based reverse proxy for Plane on Coolify
+# Uses Nginx instead of Caddy to avoid conflicts with Coolify's Caddy proxy
+# SSL termination is handled by Coolify's Caddy - this only does HTTP routing
+
+FROM nginx:1.27-alpine
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy our custom config
+COPY nginx.coolify.conf /etc/nginx/conf.d/plane.conf
+
+# Expose port 80 (HTTP only - Coolify handles HTTPS)
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

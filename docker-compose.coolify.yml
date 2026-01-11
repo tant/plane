@@ -3,7 +3,14 @@
 # ===========================================
 # Branch: oss
 # Uses shared Coolify services: PostgreSQL, Redis, MinIO
-# Only builds application services to reduce deployment time
+#
+# Architecture:
+#   Coolify's Caddy (SSL termination) -> Nginx proxy (path routing) -> App services
+#
+# IMPORTANT: In Coolify UI:
+#   1. Assign domain https://plane.carp.vn to "proxy" service
+#   2. Enable "Connect To Predefined Network" for MinIO access
+#   3. The proxy listens on port 80 (HTTP only)
 
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-https://plane.carp.vn}
@@ -46,23 +53,27 @@ x-app-env: &app-env
 
 services:
   # ===========================================
-  # Proxy - Entry point (assign domain to this service)
+  # Nginx Proxy - Path-based routing (Coolify handles SSL)
   # ===========================================
+  # Assign domain https://plane.carp.vn to this service in Coolify
+  # Uses Nginx instead of Caddy to avoid conflicts with Coolify's Caddy
   proxy:
     build:
       context: ./apps/proxy
-      dockerfile: Dockerfile.ce
+      dockerfile: Dockerfile.coolify
     restart: always
-    environment:
-      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-10485760}
-      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
-      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
     depends_on:
       - web
       - admin
       - space
       - api
       - live
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   # ===========================================
   # Frontend Services
