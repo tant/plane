@@ -62,8 +62,6 @@ services:
       - space
       - api
       - live
-    networks:
-      - plane-net
 
   # ===========================================
   # Frontend Services
@@ -76,8 +74,6 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    networks:
-      - plane-net
 
   admin:
     build:
@@ -87,8 +83,6 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    networks:
-      - plane-net
 
   space:
     build:
@@ -98,8 +92,6 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    networks:
-      - plane-net
 
   live:
     build:
@@ -115,8 +107,6 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    networks:
-      - plane-net
 
   # ===========================================
   # Backend Services
@@ -132,8 +122,6 @@ services:
     depends_on:
       plane-mq:
         condition: service_healthy
-    networks:
-      - plane-net
 
   api:
     build:
@@ -154,8 +142,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 90s
-    networks:
-      - plane-net
 
   worker:
     build:
@@ -168,8 +154,6 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    networks:
-      - plane-net
 
   beat-worker:
     build:
@@ -182,8 +166,6 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    networks:
-      - plane-net
 
   # ===========================================
   # RabbitMQ - Internal Service (no shared alternative)
@@ -202,12 +184,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    networks:
-      - plane-net
-
-networks:
-  plane-net:
-    driver: bridge
 
 volumes:
   mqdata:
