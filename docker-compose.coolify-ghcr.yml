@@ -9,10 +9,10 @@
 #
 # IMPORTANT: In Coolify UI:
 #   1. Assign domain https://plane.carp.vn to "proxy" service
-#   2. Set IMAGE_TAG variable (defaults to 'latest')
+#   2. Set IMAGE_TAG variable (defaults to 'oss' - the branch name)
 #   3. The proxy listens on port 80 (HTTP only, Coolify handles SSL)
 
-x-image-tag: &image-tag ${IMAGE_TAG:-latest}
+x-image-tag: &image-tag ${IMAGE_TAG:-oss}
 
 x-app-env: &app-env
   WEB_URL: ${WEB_URL:-https://plane.carp.vn}
