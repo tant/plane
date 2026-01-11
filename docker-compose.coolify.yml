@@ -134,6 +134,7 @@ services:
       dockerfile: Dockerfile.api
     command: ./bin/docker-entrypoint-migrator.sh
     restart: "no"
+    exclude_from_hc: true
     environment:
       <<: *app-env
     depends_on:
@@ -174,6 +175,7 @@ services:
       dockerfile: Dockerfile.api
     command: ./bin/docker-entrypoint-worker.sh
     restart: always
+    exclude_from_hc: true
     environment:
       <<: *app-env
     depends_on:
@@ -186,6 +188,7 @@ services:
       dockerfile: Dockerfile.api
     command: ./bin/docker-entrypoint-beat.sh
     restart: always
+    exclude_from_hc: true
     environment:
       <<: *app-env
     depends_on:
