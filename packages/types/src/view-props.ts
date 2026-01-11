@@ -1,3 +1,4 @@
+import type { IProjectMemberNavigationPreferences } from "./project";
 import type { TIssue } from "./issues/issue";
 import type { IProjectMemberNavigationPreferences } from "./project/projects";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";

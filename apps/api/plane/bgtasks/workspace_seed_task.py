@@ -121,7 +121,7 @@ def create_project_and_member(workspace: Workspace, bot_user: User) -> Dict[int,
             ]
         )
 
-        # Create project user properties
+        # Create issue user properties
         ProjectUserProperty.objects.bulk_create(
             [
                 ProjectUserProperty(

@@ -19,11 +19,8 @@ import { handleIssueQueryParamsByLayout } from "@plane/utils";
 import { ProjectService } from "@/services/project";
 import type { IBaseIssueFilterStore } from "../helpers/issue-filter-helper.store";
 import { IssueFilterHelperStore } from "../helpers/issue-filter-helper.store";
-// helpers
 // types
 import type { IIssueRootStore } from "../root.store";
-// constants
-// services
 
 export interface IProjectIssuesFilter extends IBaseIssueFilterStore {
   //helper actions
